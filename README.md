@@ -39,7 +39,17 @@
  * so our work of collecting background images are completed so now we will start collecting foreground images especially transparent      images.
  * So initially we started collecting the foreground images (in our sense it is cow).We searched on internet about cows and we choose      the pictures where cow is most dominating in the pictures which might results in good depth and transparent images.So we started        collecting the cow images by working as team.
  * After collection of cow images we need to make them transparent.So we used this website called remove.bg where we just upload an        image and it will give the transparent images of foreground pbject by using machine learning.It is really cool.
- ![link to remove.bg website](https://www.remove.bg/)
+ [link to remove.bg website](https://www.remove.bg/)
  * So by using this website we obtained the transparent images of cow.
+ * However for several we still have to use lasso tool in Photoshop to make the foregrounds really stand out
+ #### Foreground image
  ![transparent cow images](https://github.com/GadirajuSanjayvarma/S15/blob/master/foreground.png)
+ 
+ ### Mask Calculation
+ * So initially we have this transparent image with four channels while the extra channel is transparency channel
+ * So our team looked upon the transparency channel and set the value 0 for pixel value 0 and pixel value 1 for value greater than 0
+ * That gives good binary mask which is very good in quality of image
+ #### mask image of foreground
+ ![transparent cow mask images](https://github.com/GadirajuSanjayvarma/S15/blob/master/masks.png)
+ 
  
