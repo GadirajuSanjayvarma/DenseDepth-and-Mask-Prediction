@@ -14,5 +14,5 @@
  * Without data millions of skip connections,Millions of receptive fields will get wasted and they would be no use.
  * So i kept it in mind while developing data from my model.
  * There are two important steps in the data part of deep learning
-    *)Data collection
-    *)Data processing in right format so that neural network receives.
+    *     Data collection
+    *     Data processing in right format so that neural network receives.
