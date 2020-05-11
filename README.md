@@ -34,7 +34,7 @@
  
  ![backgroundimages](https://github.com/GadirajuSanjayvarma/S15/blob/master/download.png)
  
- ### Foreground image
+ ### Transparent Foreground image
  
  * so our work of collecting background images are completed so now we will start collecting foreground images especially transparent      images.
  * So initially we started collecting the foreground images (in our sense it is cow).We searched on internet about cows and we choose      the pictures where cow is most dominating in the pictures which might results in good depth and transparent images.So we started        collecting the cow images by working as team.
@@ -42,7 +42,7 @@
  [link to remove.bg website](https://www.remove.bg/)
  * So by using this website we obtained the transparent images of cow.
  * However for several we still have to use lasso tool in Photoshop to make the foregrounds really stand out
- #### Foreground image
+ #### Transparent Foreground image
  ![transparent cow images](https://github.com/GadirajuSanjayvarma/S15/blob/master/foreground.png)
  
  ### Mask Calculation
@@ -52,7 +52,7 @@
  #### mask image of foreground
  ![transparent cow mask images](https://github.com/GadirajuSanjayvarma/S15/blob/master/masks.png)
  
- ## Okay.We are on a good pace.We completed the process of data collection.Now we will look into the data preprocessing which is crucial     step for our deep learning model.
+ ### Okay.We are on a good pace.We completed the process of data collection.Now we will look into the data preprocessing which is              crucial     step for our deep learning model.
  
  ## Data preprocessing for our model
  
