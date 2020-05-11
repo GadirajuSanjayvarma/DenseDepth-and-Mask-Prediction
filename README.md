@@ -27,4 +27,4 @@
  * So we collected the Background images which are of some indian street photos which were covered with plastic, waste,roads and traffic     etc.
  * We filtered some of images and we spent msot of time for making the background more realistic.
  * Here are some of the images we collected for Background.
- * ![background_images] (download.jpg)
+ * ![background_images] (download.png)
