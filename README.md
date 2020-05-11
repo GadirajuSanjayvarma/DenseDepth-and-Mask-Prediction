@@ -29,5 +29,5 @@
  * Here are some of the images we collected for Background.
  ## background image
  
- ![backgroundimages] (https://github.com/GadirajuSanjayvarma/S15/blob/master/download.png)
- ![sample](https://github.com/abhinavdayal/EVA4/blob/master/S14/sample.jpg)
+ ![backgroundimages](https://github.com/GadirajuSanjayvarma/S15/blob/master/download.png)
+ 
