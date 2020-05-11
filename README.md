@@ -16,3 +16,14 @@
  * There are two important steps in the data part of deep learning
     *     Data collection
     *     Data processing in right format so that neural network receives.
+
+ ## Data Collection
+ * So we now understood the importance of data.So now we will look into data collection.
+ * Here initially i started with collection of background images.
+ * I collected images the next day and send it to my team.
+ * But my team members said that the images are not realistic and we are looking for some indian scene photos.
+ * So i stared collecting the photos of indian backgrounds with my team mates for assignment 15A.
+ * So the foreground object we choose is cow which is the most common animal on roads.
+ * So we collected the Background images which are of some indian street photos which were covered with plastic, waste,roads and traffic     etc.
+ * We filtered some of images and we spent msot of time for making the background more realistic.
+ * Here are some of the images we collected for Background.
