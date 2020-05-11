@@ -18,6 +18,8 @@
     *     Data processing in right format so that neural network receives.
 
  ## Data Collection
+ 
+ ### Background image
  * So we now understood the importance of data.So now we will look into data collection.
  * Here initially i started with collection of background images.
  * I collected images the next day and send it to my team.
@@ -27,7 +29,17 @@
  * So we collected the Background images which are of some indian street photos which were covered with plastic, waste,roads and traffic     etc.
  * We filtered some of images and we spent msot of time for making the background more realistic.
  * Here are some of the images we collected for Background.
- ## background image
+ * But after listening to your session we decided that background may or may not  be too realistic.So we also downloaded some animation    photos as background.
+ ### background image
  
  ![backgroundimages](https://github.com/GadirajuSanjayvarma/S15/blob/master/download.png)
+ 
+ ### Foreground image
+ 
+ * so our work of collecting background images are completed so now we will start collecting foreground images especially transparent      images.
+ * So initially we started collecting the foreground images (in our sense it is cow).We searched on internet about cows and we choose      the pictures where cow is most dominating in the pictures which might results in good depth and transparent images.So we started        collecting the cow images by working as team.
+ * After collection of cow images we need to make them transparent.So we used this website called remove.bg where we just upload an        image and it will give the transparent images of foreground pbject by using machine learning.It is really cool.
+ ![link to remove.bg website](https://www.remove.bg/)
+ * So by using this website we obtained the transparent images of cow.
+ ![transparent cow images](https://github.com/GadirajuSanjayvarma/S15/blob/master/foreground.png)
  
