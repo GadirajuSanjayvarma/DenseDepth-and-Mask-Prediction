@@ -48,8 +48,11 @@
  ### Mask Calculation
  * So initially we have this transparent image with four channels while the extra channel is transparency channel
  * So our team looked upon the transparency channel and set the value 0 for pixel value 0 and pixel value 1 for value greater than 0
- * That gives good binary mask which is very good in quality of image
+ * That gives good binary mask which is very good in quality of image.Even though it is not much useful to main assignment it is very       much helpful
  #### mask image of foreground
  ![transparent cow mask images](https://github.com/GadirajuSanjayvarma/S15/blob/master/masks.png)
  
+ ## Okay.We are on a good pace.We completed the process of data collection.Now we will look into the data preprocessing which is crucial     step for our deep learning model.
+ 
+ ## Data preprocessing for our model
  
