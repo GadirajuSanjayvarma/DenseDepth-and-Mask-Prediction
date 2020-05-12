@@ -132,14 +132,39 @@ INPUT bg image, list of fg images
  * Now initially we have to mount our drive to google colab.So by doing this we will get access to our drive form our colab.This makes life easier for small datasets.
  * Now we have to create folder in drive where we will have the background images and zip file for accessing.
  ### code for mounting our drive
- '''
+ bash
+ ```
    from google.colab import drive
    drive.mount('/content/drive')
  
- '''
-* So after mounting drive we will make a directory in colab vm '''data''' where our data will be stored.
+ ```
+ bash
+* So after mounting drive we will make a directory in colab vm ***data**** where our data will be stored.
 * Now we have to take that folder in drive and drag and drop the folder to our local colab file data
 * After drag and drop our contents section will get struck(i suppose the moving is happening).Wait for a minute and **turn off internet and dont restart runtime.After two minutes turn on your internet and let google colab conect itself.**
 * Now open data folder.Surprise!!!!!!!! the data is presented there.We have the zip file and bg images in that.Now when we go to drive we can find that our folder is deleted in drive.
 *  DONT WORRY we can go to trash and restore it(Google is great).
 * Now we got the zip file and bg images in our colab vm.
+
+## Extracting the zip file in the local colab virtual environment directory.
+ * Now we have the  zip file now we need to extract the colab file.So we need to go to the folder by using **cd** option in colab.
+ * Next we need to run the below code to keep the zip file extracted portion in our same directory
+ ```
+ import time
+start=time.time()
+from zipfile import ZipFile
+# Create a ZipFile Object and load sample.zip in it
+#Copy of fgbganddepth_finaldata.zip is name of our zip file
+with ZipFile('Copy of fgbganddepth_finaldata.zip', 'r') as zipObj:
+# Extract all the contents of zip file in current directory
+  zipObj.extractall()
+print(time.time()-start)
+ 
+ ```
+ * The below code will extract the zip file and place it in same directory.
+ * It took around 5 minutes for complete extraction of 5 GB.
+ 
+ ### Hello sir now we also completed the extraction of zip file in colab local virtual machine folder.Next we will look into the loading of data so that our network takes it
+ 
+ 
+ 
