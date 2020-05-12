@@ -91,4 +91,11 @@ INPUT bg image, list of fg images
  ![foreground_background Image]()
  
  ## Mask calculation of foreground_background image
- * 
+ * So when we are generating the foreground_background image we are using **Image.paste()** which is the best function used in image processing.
+ * So in that function we are using foreground image to paste on backgroound image using some co-ordinates which were obtained in random order between some range
+ * Now we will create a black image with size of background image.
+ * Now we will store that co-ordinates and we will paste the foreground on black image at that co-ordinate.
+ * Now we will go through the image(iterate) and if there is any value greater than 0 we will make it as 1 otherwise we will make it as 0.
+ * So by using this method we generated the mask of cow which is layed on background image.
+ ### here are some of the images which are obtained from the mask of fg_bg image
+ ![mask of fg_bg image]()
