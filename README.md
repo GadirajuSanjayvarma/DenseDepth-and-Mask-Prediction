@@ -118,8 +118,28 @@ INPUT bg image, list of fg images
   * After Extraction the size will be around 7 GB
  
  ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
- [Here is the link to our colab file for complete data processing stpes]()
+ [Here is the link to our colab file for complete data processing steps]()
  
- ## Data Loading
+ # Data Loading in Colab file
+ * The data loading means making our data feasible such that our network will accept the data and produce the results.
+ * Here the data loading in colab file is divided into many parts.We will explain each of the parts in detail.
+ * 1) Bringing the zip file from google drive to our colab virtual environment directory.
+ * 2) Extracting the zip file in the local colab virtual environment directory.
  
+ ## Bringing the zip file from google drive to our colab virtual environment directory.
+ * Now we completed the making of data.we have to load the data into our google colab.We can even work on our drive but the i/o operations performing on drive are very less.So we have to save them intoo our local colab machine.
+ * I just performed the series of steps which worked really well.Since google colab s cloud based engine it is just sharing data so process is very easy.
+ * Now initially we have to mount our drive to google colab.So by doing this we will get access to our drive form our colab.This makes life easier for small datasets.
+ * Now we have to create folder in drive where we will have the background images and zip file for accessing.
+ ### code for mounting our drive
+ '''
+   from google.colab import drive
+   drive.mount('/content/drive')
  
+ '''
+* So after mounting drive we will make a directory in colab vm '''data''' where our data will be stored.
+* Now we have to take that folder in drive and drag and drop the folder to our local colab file data
+* After drag and drop our contents section will get struck(i suppose the moving is happening).Wait for a minute and **turn off internet and dont restart runtime.After two minutes turn on your internet and let google colab conect itself.**
+* Now open data folder.Surprise!!!!!!!! the data is presented there.We have the zip file and bg images in that.Now when we go to drive we can find that our folder is deleted in drive.
+*  DONT WORRY we can go to trash and restore it(Google is great).
+* Now we got the zip file and bg images in our colab vm.
