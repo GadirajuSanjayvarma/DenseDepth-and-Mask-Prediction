@@ -56,3 +56,31 @@
  
  ## Data preprocessing for our model
  
+  ### Foreground-background image generation
+  * Now after we collected the foreground images and background images we started thinking of a algorithm of generating or laying fg on     bg
+  * We almost spend a week on thinking about the placing of an foreground on background using image segmentation.
+  * The main idea here is that we will do image segmentation of background image using [this colab](https://colab.research.google.com/github/lexfridman/mit-deep-learning/blob/master/tutorial_driving_scene_segmentation/tutorial_driving_scene_segmentation.ipynb).
+  * The output of image will be a combination of some maps.We will try to find best place for our foreground object based on that map.
+  * But after listening to your session i got that we can place the foreground object anywhere.Then we used good approach to place foreground on background
+  We planned to pass 2000 images in a single batch to the Depth image generator. Since 1 background will have 2000 images with 100 foregrouds (each 20 times) and another 2000 for same foreground images flipped, we ran the batch twice, second time with foregrounds flipped.
+
+Below is the process for one batch. 
+**NOTE**: We did not separately save corresponding bg, since the way we processed the image, from the image number we can determing the bg image number that we used.
+
+```
+INPUT bg image, list of fg images
+1 for each foreground in list
+  1.1 repeat 20 times
+    1.1.1. randomly pick a center point on image (two numbers in range 0 to 447 for x, y)
+    1.1.2. randomly pick a scale between .3 and .6 indicating how much square area should fg overlap on bg
+    1.1.3. resize the fg to scale and place it on top of bg centered at x, y calculated
+    1.1.4. save it at 224x224 resolution in a zip folder
+    1.1.5. calculate mask by setting a binary image to transparency channel of fg image, with trasparent = 0 amd non transparent=1
+    1.1.6. save mask at 224x224 resolution
+    1.1.7. add 448x448 image to numpy array for depth calculation
+1.3 if 100 images generated then yield the batch
+  
+2. run depth for one batch
+3. save depth images of 224x224 in zipfolder
+```
+
