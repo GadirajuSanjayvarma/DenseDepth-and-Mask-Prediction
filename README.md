@@ -99,4 +99,11 @@ INPUT bg image, list of fg images
  * So by using this method we generated the mask of cow which is layed on background image.
  ### here are some of the images which are obtained from the mask of fg_bg image
  ![mask of fg_bg image](mask_fg_bg.png)
+ 
+## Depth Calculation
+* We used nyu.h5 model for depth calcualtion from [dense depth](https://github.com/ialhashim/DenseDepth). This model requires input        images to be of 448x448 resolution and produces 224x224 size depth image. We planned to run it with a batch of 1000.
+* Since we run 2000 images at a time now we wil generate 2000 images of size 224X224.Now we will scale those images to 448X448 because the model which we are using for generation of depth images will accept the input of 448X448.It produces the output of 224X224.
+* Now in the batch we are generating 2000 images and we will send all those images to depth prediction and save it to zip folder directly.
+* Now we will use those images for our deep neural network.
+### here are some of the examples for calculation of depth images for fg_bg image 
  ![depth of fg_bg image](depth_fg_bg.png)
