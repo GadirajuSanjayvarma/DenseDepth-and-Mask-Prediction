@@ -86,7 +86,6 @@ INPUT bg image, list of fg images
 * Here we used perspective projection which means that if foreground object is in bottom of image then we will increse its scale
   because we assume that it is near to us.
  * If a foreground image is in above portion of image we are going to choose small scale since it is away from camera which is assumed by us.
- [link to forground_background selection]()
  ### Example of foreground_background image
  ![foreground_background Image](fg_bg.png)
  
@@ -107,3 +106,20 @@ INPUT bg image, list of fg images
 * Now we will use those images for our deep neural network.
 ### here are some of the examples for calculation of depth images for fg_bg image 
  ![depth of fg_bg image](depth_fg_bg.png)
+ 
+ ## Problems we faced and how we solved it during data processing
+ * The first problem is generation of 1200K images!!!!!!!!!!!!!!!!.
+ * The input and output operations performed in drive are very limited.So we cannot save 1200K images ondrive easily
+ * When we are saving images in drive it will also create the preview of that images which results in lot of time consumption.
+ * so we will generate the zip file where we are saving images in the zip file where drive will not generate the preview which results 
+  in saving of time.
+  * Also we are transferring only one file independent of size zip file we can transfer it to drive.
+  * The zip file size if 6.3 GB.
+  * After Extraction the size will be around 7 GB
+ 
+ ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
+ [Here is the link to our colab file for complete data processing stpes]()
+ 
+ 
+ 
+ 
