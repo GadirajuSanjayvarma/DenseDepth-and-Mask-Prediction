@@ -88,7 +88,7 @@ INPUT bg image, list of fg images
  * If a foreground image is in above portion of image we are going to choose small scale since it is away from camera which is assumed by us.
  [link to forground_background selection]()
  ### Example of foreground_background image
- ![foreground_background Image]()
+ ![foreground_background Image](fg_bg.png)
  
  ## Mask calculation of foreground_background image
  * So when we are generating the foreground_background image we are using **Image.paste()** which is the best function used in image processing.
@@ -98,4 +98,5 @@ INPUT bg image, list of fg images
  * Now we will go through the image(iterate) and if there is any value greater than 0 we will make it as 1 otherwise we will make it as 0.
  * So by using this method we generated the mask of cow which is layed on background image.
  ### here are some of the images which are obtained from the mask of fg_bg image
- ![mask of fg_bg image]()
+ ![mask of fg_bg image](mask_fg_bg.png)
+ ![depth of fg_bg image](depth_fg_bg.png)
