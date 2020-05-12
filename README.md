@@ -64,8 +64,8 @@
   * But after listening to your session i got that we can place the foreground object anywhere.Then we used good approach to place foreground on background
   We planned to pass 2000 images in a single batch to the Depth image generator. Since 1 background will have 2000 images with 100 foregrouds (each 20 times) and another 2000 for same foreground images flipped, we ran the batch twice, second time with foregrounds flipped.
 
-Below is the process for one batch. 
-**NOTE**: We did not separately save corresponding bg, since the way we processed the image, from the image number we can determing the bg image number that we used.
+* Below is the process for one batch. 
+* **NOTE**: We did not separately save corresponding bg, since the way we processed the image, from the image number we can determing the bg image number that we used.
 
 ```
 INPUT bg image, list of fg images
@@ -83,4 +83,12 @@ INPUT bg image, list of fg images
 2. run depth for one batch
 3. save depth images of 224x224 in zipfolder
 ```
-
+* Here we used perspective projection which means that if foreground object is in bottom of image then we will increse its scale
+  because we assume that it is near to us.
+ * If a foreground image is in above portion of image we are going to choose small scale since it is away from camera which is assumed by us.
+ [link to forground_background selection]()
+ ### Example of foreground_background image
+ ![foreground_background Image]()
+ 
+ ## Mask calculation of foreground_background image
+ * 
