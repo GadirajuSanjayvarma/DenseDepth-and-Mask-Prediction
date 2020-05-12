@@ -113,13 +113,13 @@ INPUT bg image, list of fg images
  * When we are saving images in drive it will also create the preview of that images which results in lot of time consumption.
  * so we will generate the zip file where we are saving images in the zip file where drive will not generate the preview which results 
   in saving of time.
-  * Also we are transferring only one file independent of size zip file we can transfer it to drive.
+  * Also we are transferring only one file (independent of size) zip file.so we can transfer it to drive.
   * The zip file size if 6.3 GB.
   * After Extraction the size will be around 7 GB
  
  ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
  [Here is the link to our colab file for complete data processing stpes]()
  
- 
+ ## Data Loading
  
  
