@@ -166,5 +166,77 @@ print(time.time()-start)
  
  ### Hello sir now we also completed the extraction of zip file in colab local virtual machine folder.Next we will look into the loading of data so that our network takes it
  
+ # Loading of data in batches for our network
  
+ * Loading of data in bacthes is one of the most important part in neural network.
+ * Loading of data in batches has many advantages like good loss backpropagation and identifying more generalized features.
+ * Hence we prefer loading data in batches to our network.
+ The loading of data in batches has several steps:
+  * 1) Having an access to all the respective files of images.
+  * 2) Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
+  * 3) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+  * 4) Splitting the entire images into two sets one is train dataset and other is test dataset.
+  * 5) Finding mean and standard deviation of the foreground and background,background,mask and depth images.
+  * 6) Main part loading the dataset int the format of batches by creating a class
+  * 7) Applying the transformations
+  * 8) Loading the dataset by calling the dataset
+  * 9)Loading the dataset by calling Dataloder class
+  * 10) Finally Visualizing the dataset
+  
+  ## Having an access to all the respective files of images
+  * So after extracting the dataset we need to access the files.
+  * One way of accessing of files is by storing the images in a list.NOOO that woulg be memory intensive and takes a lot of memory.
+  * Next method is by storing the paths.So one advantage is that if we store the images in paths there will be no memory intensive tasks.
+  * Next is when we are trying to access the images during training,intially we will read images from paths and will send into neural network.
+  * I followed this approach in a small dataset and for one epoch for loading paths took 44 secinds to complete while one epoch for         loading images took 35 seconds which is 10X times faster but our dataste is larger so we will use loading paths format.
+  * Below is the code for storing paths of images into a list
+  ```
+ fg_bg_images=[]
+from tqdm import tqdm_notebook
+for i in tqdm_notebook(range(400000)):
+      fg_bg_images+=["/content/data/dataset_forAssignment/output/images/fgbg{}.jpg".format(str(i).zfill(6))]
+
+  
+  ```
+ * In this code we will load the foreground lay on background images **paths** into a list.
+ * This similar approach is used for the depth images,background images and mask images.
+ * So now we have access to all the files in the dataset in the format of the paths.
  
+ ## Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
+
+* So we initially loaded the fg_bg images,bg images,mask images and depth images into respective lists.
+* But it will not help us because the accessing will not be easier and for any input there will be a fixed output only.
+* So we need to maintain their relationship and at the same time we also have to  random shuffle and also easier accessing.OMG is it       possible?????
+* Yes it is possible.Now we want to consider in such a way that all the index 0 elements are belonged to one set and all the index1 elements are belonged to one set and so on. 
+* So we need to use below code such that all the list elements will be arranges such that all the same index elements form a nested list item.
+```
+Example:
+input:[1,2,3],output=[4,5,6]
+dataset=list(zip(input,output))
+dataset=[[1,4],[2,5],[3,6]]
+
+code:
+dataset=list(zip(fg_bg_images,bg_images,masks_images,depth_images))
+```
+
+* So by using the above code we are going to have all the respective lists into single lists and easier for random shuffling and accessing.
+
+## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+* One of the mistakes that we did while doing assignments is the size of images.We confirmed the size as 224X224 but we left the size of   background and depth as 448X448.So it is a major issue and it consumes a lot of time.
+* So after doing all the above steps which take atleast 20 minutes i have to do this resizing of 400 k images which took another 20 minutes.
+* After doing the resize every image is in the shape of 224X224 which is good.
+* So these are the resizes which are being done during this assignment.
+  ### problems faced during resizing
+  * I dont have wifi and i am doig assingments through mobile hotspot and most of the times i got disconencted because of this issue of running 400 k images.
+  * So i started running it as a batch of 100 k images 4 times.
+  * So after doing resizing i will go to next part.
+  * Here is the code about resizing the images
+  ```
+  
+  for i in tqdm_notebook(range(100000)):
+      img1=Image.open("/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6)))
+      img1.thumbnail((224,224))
+      img1.save("/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6))) 
+      
+  ```
+  * So here i demostrated the code for resizing of one batch
