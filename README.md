@@ -173,13 +173,14 @@ print(time.time()-start)
  * 1) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
   * 2) Having an access to all the respective files of images.
   * 3) Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
-  * 4) Splitting the entire images into two sets one is train dataset and other is test dataset.
-  * 5) Finding mean and standard deviation of the foreground and background,background,mask and depth images.
-  * 6) Main part loading the dataset int the format of batches by creating a class
-  * 7) Applying the transformations
-  * 8) Loading the dataset by calling the dataset
-  * 9) Loading the dataset by calling Dataloder class
-  * 10) Finally Visualizing the dataset
+  * 4) visualization of the dataset list folder images
+  * 5) Splitting the entire images into two sets one is train dataset and other is test dataset.
+  * 6) Finding mean and standard deviation of the foreground and background,background,mask and depth images.
+  * 7) Main part loading the dataset int the format of batches by creating a class
+  * 8) Applying the transformations
+  * 9) Loading the dataset by calling the dataset
+  * 10) Loading the dataset by calling Dataloder class
+  * 11) Finally Visualizing the dataset
   
   
 ## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
@@ -199,15 +200,15 @@ print(time.time()-start)
   * Next is when we are trying to access the images during training,intially we will read images from paths and will send into neural network.
   * I followed this approach in a small dataset and for one epoch for loading paths took 44 secinds to complete while one epoch for         loading images took 35 seconds which is  faster but our dataste is larger so we will use loading paths format.
   * Below is the code for storing paths of images into a list
-  ### foreground on background code fro loading path into list
-  ```
- fg_bg_images=[]
+  ### foreground on background code for loading path into list
+
+``` fg_bg_images=[]
 from tqdm import tqdm_notebook
 for i in tqdm_notebook(range(400000)):
       fg_bg_images+=["/content/data/dataset_forAssignment/output/images/fgbg{}.jpg".format(str(i).zfill(6))]
-
+```
   
-  ```
+
   ### loading background images paths into a list
   
   ```
@@ -257,10 +258,59 @@ code:
 dataset=list(zip(fg_bg_images,bg_images,masks_images,depth_images))
 random.shuffle(dataset)
 ```
-# So by this we will contain all inputs,outputs into a nested list
+### So by this we will contain all inputs,outputs into a nested list
 
 * So by using the above code we are going to have all the respective lists into single lists and easier for random shuffling and accessing.
+* random.shuffle(dataset) will help us to shuffle the list so we can have images not in particular order.
 
+## Visualization of the dataset folder by using the list.
+* Let us consider the dataset folder is one which contains all the respective nested lists.
+* Now below is the code fro displaying of images in those dataset folder.
+```
+# just some random visualization of the dataset folder
+img1=Image.open(dataset[10][0])  #foreground_background image
+display(img1)
+img1=Image.open(dataset[10][1])  #background image
+display(img1)
+img1=Image.open(dataset[10][2])  # mask image
+display(img1)
+img1=Image.open(dataset[10][3])  # depth image
+display(img1)
+
+
+```
+* Below is the output of the above code
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset.png)
+
+* So by using this dataset method we have a lot of flexibility for this method.
+
+## Splitting the dataset folder into two sets which are train set and test set
+
+* So here we have a dataset folder where it contains all the images inside nested lists in it.
+* So we need to divide this dataset into two parts such that train part gets 70% of dataset folder and test part contains 30% of dataset folder.
+* Now we can apply different procedures that are applied to train on train folder and to test on test transforms
+* Below is the code for the division of dataset folder into train and test folder.
+```
+train_dataset=[x for i,x in enumerate(dataset) if (i<(0.7*len(dataset)))] 
+test_dataset=[x for i,x in enumerate(dataset[(int)(0.7*len(dataset)):]) if (i<(0.3*len(dataset)))]
+
+# here we are taking length of dataset folder for division of the folder into two parts.
+```
+
+## Clearing of lists
+
+* Here we have so many lists which contain around 4 lahks data which occupy data and memory in ram.So we need to clear all the lists after getting train_dataset and test_dataset.
+
+* Below is the code for clearing the lists
+```
+depth_images.clear()
+masks_images.clear()
+bg_images.clear()
+fg_bg_images.clear()
+dataset.clear()
+```
+* It is a python function which cleares all the data in a particular list.
+* It reduces the ram usage and help us get out of cuda out of memory error. 
 
 
 
