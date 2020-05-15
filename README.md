@@ -170,9 +170,9 @@ print(time.time()-start)
  * Loading of data in batches has many advantages like good loss backpropagation and identifying more generalized features.
  * Hence we prefer loading data in batches to our network.
  The loading of data in batches has several steps:
-  * 1) Having an access to all the respective files of images.
-  * 2) Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
-  * 3) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+ * 1) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+  * 2) Having an access to all the respective files of images.
+  * 3) Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
   * 4) Splitting the entire images into two sets one is train dataset and other is test dataset.
   * 5) Finding mean and standard deviation of the foreground and background,background,mask and depth images.
   * 6) Main part loading the dataset int the format of batches by creating a class
@@ -180,6 +180,17 @@ print(time.time()-start)
   * 8) Loading the dataset by calling the dataset
   * 9) Loading the dataset by calling Dataloder class
   * 10) Finally Visualizing the dataset
+  
+  
+## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+* One of the mistakes that we did while doing assignments is the size of images.We confirmed the size as 224X224 but we left the size of   background and depth as 448X448.So it is a major issue and it consumes a lot of time.
+* But after realizing this we again ran an script to resize images in such a way we would benefit from both speed and accuracy.So we pick an size 160X160.Then we permanently made those changes in the zip folder.
+* But we have to do resize of background images because i forgot about them and i need to resize them to 160X160 everytime so that all the images is of same size.
+* Generally the resizing took only 1 second bcz we have to resize only 100 background images and since we are copying paths there is no need to have 400K background images.
+* After doing the resize every image is in the shape of 160X160 which is good.
+* So these are the resizes which are being done during this assignment.
+ 
+
   
   ## Having an access to all the respective files of images
   * So after extracting the dataset we need to access the files.
@@ -244,16 +255,18 @@ dataset=[[1,4],[2,5],[3,6]]
 
 code:
 dataset=list(zip(fg_bg_images,bg_images,masks_images,depth_images))
-# So by this we will contain all inputs,outputs into a nested list
+random.shuffle(dataset)
 ```
+# So by this we will contain all inputs,outputs into a nested list
 
 * So by using the above code we are going to have all the respective lists into single lists and easier for random shuffling and accessing.
 
-## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
-* One of the mistakes that we did while doing assignments is the size of images.We confirmed the size as 224X224 but we left the size of   background and depth as 448X448.So it is a major issue and it consumes a lot of time.
-* But after realizing this we again ran an script to resize images in such a way we would benefit from both speed and accuracy.So we pick an size 160X160.Then we permanently made those changes in the zip folder.
-* But we have to do resize of background images because i forgot about them and i need to resize them to 160X160 everytime so that all the images is of same size.
-* Generally the resizing took only 1 second bcz we have to resize only 100 background images and since we are copying paths there is no need to have 400K background images.
-* After doing the resize every image is in the shape of 160X160 which is good.
-* So these are the resizes which are being done during this assignment.
- 
+
+
+
+
+
+
+
+
+
