@@ -74,14 +74,14 @@ INPUT bg image, list of fg images
     1.1.1. randomly pick a center point on image (two numbers in range 0 to 447 for x, y)
     1.1.2. randomly pick a scale between .3 and .6 indicating how much square area should fg overlap on bg
     1.1.3. resize the fg to scale and place it on top of bg centered at x, y calculated
-    1.1.4. save it at 224x224 resolution in a zip folder
+    1.1.4. save it at 160x160 resolution in a zip folder
     1.1.5. calculate mask by setting a binary image to transparency channel of fg image, with trasparent = 0 amd non transparent=1
-    1.1.6. save mask at 224x224 resolution
+    1.1.6. save mask at 160x160 resolution
     1.1.7. add 448x448 image to numpy array for depth calculation
 1.3 if 100 images generated then yield the batch
   
 2. run depth for one batch
-3. save depth images of 224x224 in zipfolder
+3. save depth images of 160x160 in zipfolder
 ```
 * Here we used perspective projection which means that if foreground object is in bottom of image then we will increse its scale
   because we assume that it is near to us.
@@ -101,7 +101,7 @@ INPUT bg image, list of fg images
  
 ## Depth Calculation
 * We used nyu.h5 model for depth calcualtion from [dense depth](https://github.com/ialhashim/DenseDepth). This model requires input        images to be of 448x448 resolution and produces 224x224 size depth image. We planned to run it with a batch of 1000.
-* Since we run 2000 images at a time now we wil generate 2000 images of size 224X224.Now we will scale those images to 448X448 because the model which we are using for generation of depth images will accept the input of 448X448.It produces the output of 224X224.
+* Since we run 2000 images at a time now we wil generate 2000 images of size 224X224.Now we will scale those images to 448X448 because the model which we are using for generation of depth images will accept the input of 448X448.It produces the output of 224X224.After getting those images we will resize them to 160X160 size which is a compromise we took for speed and accuracy
 * Now in the batch we are generating 2000 images and we will send all those images to depth prediction and save it to zip folder directly.
 * Now we will use those images for our deep neural network.
 ### here are some of the examples for calculation of depth images for fg_bg image 
@@ -114,8 +114,8 @@ INPUT bg image, list of fg images
  * so we will generate the zip file where we are saving images in the zip file where drive will not generate the preview which results 
   in saving of time.
   * Also we are transferring only one file (independent of size) zip file.so we can transfer it to drive.
-  * The zip file size if 6.3 GB.
-  * After Extraction the size will be around 7 GB
+  * The zip file size if 3.2 GB.
+  * After Extraction the size will be around 4 GB
  
  ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
  [Here is the link to our colab file for complete data processing steps]()
@@ -132,16 +132,14 @@ INPUT bg image, list of fg images
  * Now initially we have to mount our drive to google colab.So by doing this we will get access to our drive form our colab.This makes life easier for small datasets.
  * Now we have to create folder in drive where we will have the background images and zip file for accessing.
  ### code for mounting our drive
- bash
  ```
    from google.colab import drive
    drive.mount('/content/drive')
  
  ```
- bash
-* So after mounting drive we will make a directory in colab vm ***data**** where our data will be stored.
+* So after mounting drive we will make a directory in colab vm ***data*** where our data will be stored.
 * Now we have to take that folder in drive and drag and drop the folder to our local colab file data
-* After drag and drop our contents section will get struck(i suppose the moving is happening).Wait for a minute and **turn off internet and dont restart runtime.After two minutes turn on your internet and let google colab conect itself.**
+* After drag and drop our contents section will get struck(i suppose the copying of file is happening).Wait for a minute and **turn off internet and dont restart runtime.After two minutes turn on your internet and let google colab conect itself.**
 * Now open data folder.Surprise!!!!!!!! the data is presented there.We have the zip file and bg images in that.Now when we go to drive we can find that our folder is deleted in drive.
 *  DONT WORRY we can go to trash and restore it(Google is great).
 * Now we got the zip file and bg images in our colab vm.
@@ -180,7 +178,7 @@ print(time.time()-start)
   * 6) Main part loading the dataset int the format of batches by creating a class
   * 7) Applying the transformations
   * 8) Loading the dataset by calling the dataset
-  * 9)Loading the dataset by calling Dataloder class
+  * 9) Loading the dataset by calling Dataloder class
   * 10) Finally Visualizing the dataset
   
   ## Having an access to all the respective files of images
@@ -188,8 +186,9 @@ print(time.time()-start)
   * One way of accessing of files is by storing the images in a list.NOOO that woulg be memory intensive and takes a lot of memory.
   * Next method is by storing the paths.So one advantage is that if we store the images in paths there will be no memory intensive tasks.
   * Next is when we are trying to access the images during training,intially we will read images from paths and will send into neural network.
-  * I followed this approach in a small dataset and for one epoch for loading paths took 44 secinds to complete while one epoch for         loading images took 35 seconds which is 10X times faster but our dataste is larger so we will use loading paths format.
+  * I followed this approach in a small dataset and for one epoch for loading paths took 44 secinds to complete while one epoch for         loading images took 35 seconds which is  faster but our dataste is larger so we will use loading paths format.
   * Below is the code for storing paths of images into a list
+  ### foreground on background code fro loading path into list
   ```
  fg_bg_images=[]
 from tqdm import tqdm_notebook
@@ -198,13 +197,41 @@ for i in tqdm_notebook(range(400000)):
 
   
   ```
+  ### loading background images paths into a list
+  
+  ```
+  bg_images=[]
+for i in tqdm_notebook(range(1,7)):
+      for k in range(4000):
+        bg_images+=["/content/data/dataset_forAssignment/bg_images/Copy of bgimg{}.jpg".format(str(i).zfill(3))]
+  ```
+  * Here we are storing each background image path 4000 times because each background images give 4000 images.
+  
+  ### loading mask images paths in list
+  
+  
+  ```
+  
+  masks_images=[]
+for i in tqdm_notebook(range(24000)):
+      masks_images+=["/content/data/dataset_forAssignment/output/masks/mask{}.jpg".format(str(i).zfill(6))]
+  ```
+  
+  ### loading depth images paths into list
+  
+  ```
+  depth_images=[]
+for i in tqdm_notebook(range(24000)):
+      depth_images+=["/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6))]
+  ```
+  
  * In this code we will load the foreground lay on background images **paths** into a list.
  * This similar approach is used for the depth images,background images and mask images.
  * So now we have access to all the files in the dataset in the format of the paths.
  
  ## Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
 
-* So we initially loaded the fg_bg images,bg images,mask images and depth images into respective lists.
+* So we initially loaded the fg_bg images,bg images,mask images and depth images **paths** into respective lists.
 * But it will not help us because the accessing will not be easier and for any input there will be a fixed output only.
 * So we need to maintain their relationship and at the same time we also have to  random shuffle and also easier accessing.OMG is it       possible?????
 * Yes it is possible.Now we want to consider in such a way that all the index 0 elements are belonged to one set and all the index1 elements are belonged to one set and so on. 
@@ -217,26 +244,16 @@ dataset=[[1,4],[2,5],[3,6]]
 
 code:
 dataset=list(zip(fg_bg_images,bg_images,masks_images,depth_images))
+# So by this we will contain all inputs,outputs into a nested list
 ```
 
 * So by using the above code we are going to have all the respective lists into single lists and easier for random shuffling and accessing.
 
 ## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
 * One of the mistakes that we did while doing assignments is the size of images.We confirmed the size as 224X224 but we left the size of   background and depth as 448X448.So it is a major issue and it consumes a lot of time.
-* So after doing all the above steps which take atleast 20 minutes i have to do this resizing of 400 k images which took another 20 minutes.
-* After doing the resize every image is in the shape of 224X224 which is good.
+* But after realizing this we again ran an script to resize images in such a way we would benefit from both speed and accuracy.So we pick an size 160X160.Then we permanently made those changes in the zip folder.
+* But we have to do resize of background images because i forgot about them and i need to resize them to 160X160 everytime so that all the images is of same size.
+* Generally the resizing took only 1 second bcz we have to resize only 100 background images and since we are copying paths there is no need to have 400K background images.
+* After doing the resize every image is in the shape of 160X160 which is good.
 * So these are the resizes which are being done during this assignment.
-  ### problems faced during resizing
-  * I dont have wifi and i am doig assingments through mobile hotspot and most of the times i got disconencted because of this issue of running 400 k images.
-  * So i started running it as a batch of 100 k images 4 times.
-  * So after doing resizing i will go to next part.
-  * Here is the code about resizing the images
-  ```
-  
-  for i in tqdm_notebook(range(100000)):
-      img1=Image.open("/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6)))
-      img1.thumbnail((224,224))
-      img1.save("/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6))) 
-      
-  ```
-  * So here i demostrated the code for resizing of one batch
+ 
