@@ -315,6 +315,115 @@ dataset.clear()
 * It is a python function which cleares all the data in a particular list.
 * It reduces the ram usage and help us get out of cuda out of memory error. 
 
+## Calculation of mean and standard deviation
+* Mean and standard deviation are very important for a dataset.The pixel values in an image may be around 0-255.
+* So the gradient will be diminished or overflowed because of the large scale in which the images pixels ranged.
+* So we have to find the mean and standerd deviation in order to be the images in between 0 and 1
+* We will subtract each pixel by it's mean and divide by it's standard deviation in order to be in between 0 and 1
+* So finding mean and standard deviation is very important.
+* So in order for faster calculation of mean and standard deviation i used **cupy which is a gpu version of numpy which is 10 times faster than numpy**.
+* But pytorch doesnt work with cupy so you can use it only for intenesive operation like these where pytorch is not used.
+* Below is the code for finding mean and standard deviation.
+
+### code for calculation of mean and standard deviation of foreground_background image
+```
+from tqdm import tqdm_notebook
+from PIL import Image
+import numpy as np
+import cupy as cp 
+'''numpy executes on cpu even though you are on gpu.So i am using cupy which will execute on gpu and 10 times faster than numpy only on larger operations'''
+import glob
+n = 0
+s = cp.zeros(3)
+sq = cp.zeros(3)
+for file in tqdm_notebook(glob.glob('/content/data/dataset_forAssignment/output/images/*.jpg')):
+  data=Image.open(file)
+  x = cp.array(data)/255
+  s += x.sum(axis=(0,1))
+  sq += cp.sum(cp.square(x), axis=(0,1))
+  n += x.shape[0]*x.shape[1]
+
+mu = s/n
+std = cp.sqrt((sq/n - cp.square(mu)))
+print(mu, sq/n, std, n)
+```
+* here mu represents mean and std represenst standard deviation which will print the results.
+
+
+### code for calculation of mean and standard deviation of background image
+```
+from tqdm import tqdm_notebook
+from PIL import Image
+import numpy as np
+import cupy as cp 
+'''numpy executes on cpu even though you are on gpu.So i am using cupy which will execute on gpu and 10 times faster than numpy only on larger operations'''
+import glob
+n = 0
+s = cp.zeros(3)
+sq = cp.zeros(3)
+for file in tqdm_notebook(glob.glob('/content/data/dataset_forAssignment/bg_images/*.jpg')):
+  data=Image.open(file)
+  x = cp.array(data)/255
+  s += x.sum(axis=(0,1))
+  sq += cp.sum(cp.square(x), axis=(0,1))
+  n += x.shape[0]*x.shape[1]
+
+mu = s/n
+std = cp.sqrt((sq/n - cp.square(mu)))
+print(mu, sq/n, std, n)
+```
+* here mu represents mean and std represenst standard deviation which will print the results.
+
+
+### code for calculation of mean and standard deviation of depth image
+```
+from tqdm import tqdm_notebook
+from PIL import Image
+import numpy as np
+import cupy as cp 
+'''numpy executes on cpu even though you are on gpu.So i am using cupy which will execute on gpu and 10 times faster than numpy only on larger operations'''
+import glob
+n = 0
+s = cp.zeros(1) #since it is having only one channel we are taking it having a length of only one
+sq = cp.zeros()
+for file in tqdm_notebook(glob.glob('/content/data/dataset_forAssignment/output/depth/*.jpg')):
+  data=Image.open(file)
+  x = cp.array(data)/255
+  s += x.sum(axis=(0,1))
+  sq += cp.sum(cp.square(x), axis=(0,1))
+  n += x.shape[0]*x.shape[1]
+
+mu = s/n
+std = cp.sqrt((sq/n - cp.square(mu)))
+print(mu, sq/n, std, n)
+```
+* here mu represents mean and std represenst standard deviation which will print the results.
+
+
+### code for calculation of mean and standard deviation of masks image
+```
+from tqdm import tqdm_notebook
+from PIL import Image
+import numpy as np
+import cupy as cp 
+'''numpy executes on cpu even though you are on gpu.So i am using cupy which will execute on gpu and 10 times faster than numpy only on larger operations'''
+import glob
+n = 0
+s = cp.zeros(3)
+sq = cp.zeros(3)
+for file in tqdm_notebook(glob.glob('/content/data/dataset_forAssignment/output/masks/*.jpg')):
+  data=Image.open(file)
+  x = cp.array(data)/255
+  s += x.sum(axis=(0,1))
+  sq += cp.sum(cp.square(x), axis=(0,1))
+  n += x.shape[0]*x.shape[1]
+
+mu = s/n
+std = cp.sqrt((sq/n - cp.square(mu)))
+print(mu, sq/n, std, n)
+```
+* here mu represents mean and std represenst standard deviation which will print the results.
+
 
 
 
