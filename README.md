@@ -281,6 +281,9 @@ display(img1)
 ```
 * Below is the output of the above code
 ![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset1.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset2.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset3.png)
 
 * So by using this dataset method we have a lot of flexibility for this method.
 
