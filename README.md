@@ -424,7 +424,228 @@ print(mu, sq/n, std, n)
 ```
 * here mu represents mean and std represenst standard deviation which will print the results.
 
+# Main part loading the dataset in the format of batches by creating a class
+ * Okay now we entered the first step of creating the images into batches
+* Here we completed all the required steps to successfully convert images into batches
+* So initially we will create a class say **get_dataset which inherits from Dataset class**.So usually this is a custom data so we are following this procedure.If this is a predefined dataset in pytorch then it will be in batches and it is a simple process.
+* Now we need to override some functions in the Dataset in our own classes.
+ * Pytorch is the most flexible framework for deep learning.Now we have loaded our data in the paths we have to talk about increasing      efficiency of our training loop.
+ * So the main power of the fast execution of so many images comes in Vectorization
+ * Vectorization means applying a particular operation without using explicit for loops.
+ * It is faster by 400 times then normal implicit for loops.
+ * So the developers and many people suggested to send images in format of batches so that we can utilize
+   the power of Vectorization.
+   * So pytorch provided a predefined class Dataset which helps us to return images in format of batches.
+   * So there are two methods inside the Dataset class which are ``` __len__``` and ```get_item__``` which are very impoertant methods.
+   * The first one will return the no of samples in the given dataset and second one is where you will get an index and you have to return  the input and output based on that index.
+   * It is very simple and efficient.We can also apply transformations in this class while returning the image which provide so much convenience for us.
+   * Below is the code i used to produce images in batches.
+ 
+```class get_dataset(Dataset):
+  def __init__(self,dataset,transforms=None):
+    self.fg_bgimage,self.bg_image,self.mask_image,self.depth_image=zip(*dataset)
+    self.transform=transforms
+ 
+ 
+  def __len__(self):
+    return (len(self.fg_bgimage))
+    
+  def __getitem__(self,index):
+      if(torch.is_tensor(index)):
+        index=index.tolist(index)
+      input1=Image.open(self.fg_bgimage[index])
+      input1.thumbnail((100,100))
+      input1=np.asarray(input1)
+      input2=(Image.open(self.bg_image[index]))
+      input2=np.asarray(input2)
+      output1=((Image.open(self.mask_image[index])))
+      output1.thumbnail((100,100))
+      output1=np.asarray(output1)
+      output2=(Image.open(self.depth_image[index]))
+      output2.thumbnail((100,100))
+      output2=np.asarray(output2)
+      output1=output1.transpose(1,0)/255
+      output2=output2.transpose(1,0)
+      if(self.transform):
+        input1=self.transform[0](input1)
+        input2=self.transform[1](input2)
+        output1=self.transform[2](output1)
+        output2=self.transform[3](output2)
+      return input1,input2,output1,output
+      ```
+      
+```
 
+* Here we have a class named get_dataset which inherits properties from Dataset which is imported from pre-defined **torch.utils.data** function.
+* In the constructor initially we will just store the paths and transforms locally in order for faster accessing.
+* In the function **__len__** we need to return the length of images or objects in which the class need to act on.
+* The function **__getitem__()** is one of the most important functions.Here the function will give an index as input to function and  we need to return values like input and output based on index.Like if you are having input and output in lists we can return the values by just specifying the list[index].By here you would have understood the flexibilty of pytorch.
+* Since I am using paths i need to read the image in path and also need to apply transfromations where normalization should be done for better results.
+* **Important thing.Intially i have images in size of 160x160 but i resized it to 100X100 for better batch size and i will explain why i did that in model section sir.**
+* So for every image i resized it to 100x100 after reading image and i will apply tranformations.
+* we can just return values form that function in any order but **remember you need to follow that order through out the project**.
+
+### Errors i faced with dataloading into class:
+* As i mentioned above that we can use cupy if we are having gpu which is used for faster accessing  but pytorch falis to initialize the runtime with cupy otherwise the speed should have improved by 10 times.
+
+
+## Applying transformations to datasets
+* Applying transformations to datasets is one of the most important aspect in the deep learning.
+* if we have to increase the accuracy then we need more capacity or more data to train on.
+* In first case to add more capacity then we need more amount of gpu to do work.
+* So in this case we need to more data to work on but collection of data is very hard.So we will apply data transformations to get more variational data for training of a deep neural network.
+* So for these purposes we will apply data transformations
+* When we talk about the transformations i applied normalization on both foreground_background image,background image, depth image in both train and test transformations.
+* The normalisation is important because it scales the value to be in between -1 to 1. 
+* I cannot use cutdown or random erasing in this beacause it is a reconstruction problem.
+* **It is not a classification problem like even though some portion of object is missing i can tell it as cow.Here we need mask of image so if some portion of image is missing then it should not be there in mask also. **
+* Cutdown and random erasing follows random approach so it will also be difficult if we change our mask according to the ranodm erasing or  cutout.
+* So i didint thought about the cutdown or random erasing techinques.
+### Transfromations applied to foreground_background data
+* For foreground_background image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
+* So normalization is important and i used the above code for finding mean and standard deviation values.
+* I did not apply the random erasing and cutout approach.That is the only transformation i applied.
+* I tried applying **RGBshift** but albumentations is showing some error.So i did not applied that. 
+* **I thought that my network should see the entire image without any disturbance so that reconstruction cna be done properly**
+
+### Transfromations applied to background data
+* For background image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
+* So normalization is important and i used the above code for finding mean and standard deviation values.
+* I did not apply the random erasing and cutout approach.That is the only transformation i applied.
+* I tried applying **RGBshift** but albumentations is showing some error.So i did not applied that. 
+* **I thought that my network should see the entire image without any disturbance so that reconstruction cna be done properly**
+### Transfromations applied to depth data
+* So depth data is very important so i also applied the normalization to it because it is having distribution of values.
+* The values are in range of 0-255
+* For depth image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
+* So normalization is important and i used the above code for finding mean and standard deviation values.
+* That is the only transfromation i have in mind of applying that.Because the depth image is an transformation we should not alter it.
+### Transfromations applied to mask data
+* So when i tried doing this assignment and i ahve to predict mask i have an idea on how mask should be.
+* It should contain only two values 0 and 1.
+* The normalization should not be applied on mask since it is not a distribution of values.
+* So i didnt apply any transformatioms on mask since it is already in between 0 -1 and it is already good for gradient flow.
+* So the mask is going into the network as it is.
+
+### Below is the code for transformations of inputs and outputs.
+```
+from eva4datatransforms import AlbumentationTransforms
+import albumentations.augmentations.transforms as A
+
+# 12k images
+mean_depth=(0.59492888)
+std_depth=(0.25569079)
+mean_fgbg=(0.4802258,0.52770951,0.52247662)
+std_fgbg=(0.22515411,0.22905536,0.30719277)
+mean_bg=(0.47247124,0.5431315,0.5466434)
+std_bg=(0.21798535,0.22106706,0.30929284)
+background_transforms=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_bg, std=std_bg),
+ 
+  ]  
+  
+)
+depth_transforms=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_depth, std=std_depth),
+ 
+  ]  
+  
+)
+fgbg_transforms=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_fgbg, std=std_fgbg),
+ 
+  ]  
+  
+)
+mask_transforms=AlbumentationTransforms(
+  [
+   
+  
+  ]  
+  
+)
+train_transforms=(fgbg_transforms,background_transforms,mask_transforms,depth_transforms)
+background_transforms1=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_bg, std=std_bg),
+  ]  
+  
+)
+depth_transforms1=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_depth, std=std_depth),
+ 
+  ]  
+  
+)
+fgbg_transforms1=AlbumentationTransforms(
+  [
+   
+   A.Normalize(mean=mean_fgbg, std=std_fgbg),
+ 
+  ]  
+  
+)
+mask_transforms1=AlbumentationTransforms(
+  [
+   
+ 
+  ]  
+  
+)
+test_transforms=(fgbg_transforms1,background_transforms1,mask_transforms1,depth_transforms1)
+
+```
+
+### Okay sir we have also completed the transformations of our inputs and outputs which are foredround_backgorund,background,depth,mask.Now let us move to next session before that drink some water sir:)
+
+## Loading the dataset by calling the dataset
+
+* So after defining the transformations and get_dataset class we need to define a method to call it.
+* Below is a code that is used to define the dataset in batches
+```
+train=get_dataset(train_dataset,transforms=train_transforms)
+test=get_dataset(test_dataset,transforms=test_transforms)
+from eva4dataloaders import DataLoader
+dataloader=DataLoader(batch_size=40) #since 40 is a multiple of 8
+train_loader=dataloader.load(train)
+test_loader=dataloader.load(test)
+```
+* Here get_dataset is a function which we defined above which will take train_dataset which is  a list that takes the index and return the values according to batches.
+* transforms are the Albumentations transfromations which we defined for the images.
+* Dataloader is the the main component which is going to call the images in batches.
+* It will define parameteres like batch_size,pin_memory and num_workers which are used for parallel processing.
+* It is going to change the parameters based on the device in which model is running.
+* It is going to take data and take required parameters and it is going to release images into batches according to them.
+
+## Visualizing the dataset.
+* So intially we need to visualize the data after transformations because it will give us insight on what our model is looking and how it is looking the dataset.
+* So it is very important to look at the changes the transformations made to your data.
+
+## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
+# Model architecture (The Main Engine behind deep learning)
+* So when i understood the assignment i am very much excited in developing the model.
+* Now the input to model is foreground_background image and next one is background image.
+* The output to model is depth image and mask image.
+**** *  We have to understood that depth image and mask image are entirely two different images.
+      * We cannot have same parameters of both of them.
+      * we cannot have same loss functions for both of them.
+      * So we need to figure out a way that we need to have two seperate convolutions for both outputs and seperate loss functions for both of them.
+      * i tried many architectures but the results were not good.
+      * I revised the entire notes i prepared from these 15  sessions i got down some important points.
+      * Receptive field when i am preparing the architecture concept of receptive field is completely out of my mind.
+      * So i implemented it and got good receptive field of 200x200 for input image size 100x100 by using dilated convolutions which is good.
+      * Thank god i prepared the notes.
+****
+*  So here is the visual representation of my model using tensorboard.
 
 
 
