@@ -749,38 +749,72 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
  
 ### PART-3 OF MY CODE
 ![part3](https://github.com/GadirajuSanjayvarma/S15/blob/master/image3.png)
-* Now we will get an output of100x100x64 channels from those concatenation part.
-# * Now we can observe that the two paths are equal left and right side are equal.
-# * So i will observe the left part which is mask part and you can also understand the depth part.
-* So now we will send the input to conv5,conv6,conv7,conv8.
-* Below is the code to implement those.
-```
-    self.conv5=self.create_conv2d(64,64,dilation=2,padding=2) #receptive field 13  input:100x100x64 output:100x100x64
-    self.conv6=self.create_conv2d(64,64,dilation=4,padding=4) #receptive field 19 input:100x100x64 output:100x100x64
-    self.conv7=self.create_conv2d(64,128,dilation=8,padding=8) #receptive field 29 input:100x100x64 output:100x100x128
-    self.conv8=self.create_conv2d(128,64) #receptive field 31 input:100x100x128 output:100x100x64
-    
-```
-* So here earlier i talked about a important concept **Receptive Field**
-* So to increase receptive fields we need to use dilated convolutions.
-* Dilated convolutions are used to increase the receptive field by maintaining same kernal size by increasing dilation size.
-```
-The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=dilation+keral_size
-```
-* So the receptive filed increased by 13,19,29,31 respectively.
 
-* **After that conv8 we can see a path generating from it.It is skip connection.SO i will add it to another ouput before ending so that we can have multiple receptive fields.**
-
-* SO by here we completed the part-2 of diagram where we send from conv5,conv6,conv7,conv8.Next we will send to conv9 which we will see in part3.Similar architecture is also followed in right side also which is predicting depth.
-
-* Code where we are sending from conv5-conv8 for part2
+* So after conv8 we can continue like that without decreasing the size but the no of layers will also be increased.
+* So we have to decrease the size of image by maxpooling or 3x3 with stride 2 so that size will be reduced and also the receptive field increses 2 times from now.
+*  So firstly we will look into the code of part-3 convolutions.**I am remianding once again that left and right side structures are same.you can have a look into my video if you didnt understood my architecture at once.**
+* **We can also find a dark thick line beside our convolution path which is skip connection.**
 ```
-    output1=self.conv5(output1)
-    output1=self.conv6(output1)
-    output1=self.conv7(output1)
-    output1=self.conv8(output1)
-    self.concat1=output1 # this self.concat1 holds the tensors for skip connection.
+    # it is a 3x3 convolution with stride2 for decreasing in size of image.
+    self.conv9=self.create_conv2d(64,16,stride=2,padding=1) #receptive field 33 input:100x100x64 output:50x50x16
+    self.conv10=self.create_conv2d(16,16) #receptive field 37 input:50x50x16 output:50x50x16
+    self.conv11=self.create_conv2d(16,32,dilation=2,padding=2) #receptive field 45 input:50x50x16 output:50x50x32
+    self.conv12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57 input:50x50x32 output:50x50x32
+    self.conv13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77 input:50x50x32 output:50x50x64
+    self.conv14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113 input:50x50x64 output:50x50x64
 ```
-* The intuition is that we will send the input through conv5 where our model will try to learn better and better after each convolution.
+* In conv9 we will get an input of 100x100x64 and the output will be 50x50x16.
+* Here instead of maxpooling we used 3x3 with stride 2 for better performance.It reduces the size by 2.
+* Next we will send it conv10,conv11,conv12,conv13,conv14 which will manipulate the no of channnels but not with size.
+* **You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10 **
+* In the conv11,conv12,conv13 and conv14. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
 
+* The channels of images followed as 16,32,32,64,64 which is of a embedding type of architecture.
+* **My intuition is that since we need to identify only patterns i thought that 64  channels are good enough.**
+
+* With increase in the dilation the padding is also increased to  maintain the same image size.
+* The below code which we used in forward propagation for the part-3
+```
+    output1=self.conv9(output1)
+    output1=self.conv10(output1)
+    output1=self.conv11(output1)
+    output1=self.conv12(output1)
+    output1=self.conv13(output1)
+    output1=self.conv14(output1)
+```
+### PART-4 (final)OF MY CODE
+![part4](https://github.com/GadirajuSanjayvarma/S15/blob/master/image4.png)
+
+* So after conv8 we can continue like that without decreasing the size but the no of layers will also be increased.
+* So we have to decrease the size of image by maxpooling or 3x3 with stride 2 so that size will be reduced and also the receptive field increses 2 times from now.
+*  So firstly we will look into the code of part-3 convolutions.**I am remianding once again that left and right side structures are same.you can have a look into my video if you didnt understood my architecture at once.**
+* **We can also find a dark thick line beside our convolution path which is skip connection.**
+```
+    # it is a 3x3 convolution with stride2 for decreasing in size of image.
+    self.conv9=self.create_conv2d(64,16,stride=2,padding=1) #receptive field 33 input:100x100x64 output:50x50x16
+    self.conv10=self.create_conv2d(16,16) #receptive field 37 input:50x50x16 output:50x50x16
+    self.conv11=self.create_conv2d(16,32,dilation=2,padding=2) #receptive field 45 input:50x50x16 output:50x50x32
+    self.conv12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57 input:50x50x32 output:50x50x32
+    self.conv13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77 input:50x50x32 output:50x50x64
+    self.conv14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113 input:50x50x64 output:50x50x64
+```
+* In conv9 we will get an input of 100x100x64 and the output will be 50x50x16.
+* Here instead of maxpooling we used 3x3 with stride 2 for better performance.It reduces the size by 2.
+* Next we will send it conv10,conv11,conv12,conv13,conv14 which will manipulate the no of channnels but not with size.
+* **You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10 **
+* In the conv11,conv12,conv13 and conv14. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
+
+* The channels of images followed as 16,32,32,64,64 which is of a embedding type of architecture.
+* **My intuition is that since we need to identify only patterns i thought that 64  channels are good enough.**
+
+* With increase in the dilation the padding is also increased to  maintain the same image size.
+* The below code which we used in forward propagation for the part-3
+```
+    output1=self.conv9(output1)
+    output1=self.conv10(output1)
+    output1=self.conv11(output1)
+    output1=self.conv12(output1)
+    output1=self.conv13(output1)
+    output1=self.conv14(output1)
+```
 
