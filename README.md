@@ -632,19 +632,19 @@ test_loader=dataloader.load(test)
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
 # Model architecture (The Main Engine behind deep learning)
-* So when i understood the assignment i am very much excited in developing the model.
-* Now the input to model is foreground_background image and next one is background image.
-* The output to model is depth image and mask image.
-**** *  We have to understood that depth image and mask image are entirely two different images.
-      * We cannot have same parameters of both of them.
-      * we cannot have same loss functions for both of them.
-      * So we need to figure out a way that we need to have two seperate convolutions for both outputs and seperate loss functions for both of them.
-      * i tried many architectures but the results were not good.
-      * I revised the entire notes i prepared from these 15  sessions i got down some important points.
-      * Receptive field when i am preparing the architecture concept of receptive field is completely out of my mind.
-      * So i implemented it and got good receptive field of 200x200 for input image size 100x100 by using dilated convolutions which is good.
-      * Thank god i prepared the notes.
-****
+### * So when i understood the assignment i am very much excited in developing the model.
+### * Now the input to model is foreground_background image and next one is background image.
+### * The output to model is depth image and mask image.
+### * We have to understood that depth image and mask image are entirely two different images.
+### * We cannot have same parameters of both of them.
+### * we cannot have same loss functions for both of them.
+### * So we need to figure out a way that we need to have two seperate convolutions for both outputs and seperate loss functions for both of them.
+### * i tried many architectures but the results were not good.
+### * I revised the entire notes i prepared from these 15  sessions i got down some important points.
+### * Receptive field when i am preparing the architecture concept of receptive field is completely out of my mind.
+### * So i implemented it and got good receptive field of 200x200 for input image size 100x100 by using dilated convolutions which is good.
+### * Thank god i prepared the notes.
+
 *  So here is the visual representation of my model using tensorboard.
 
 
