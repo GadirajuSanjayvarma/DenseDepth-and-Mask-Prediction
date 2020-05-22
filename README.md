@@ -762,15 +762,17 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
     self.conv12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57 input:50x50x32 output:50x50x32
     self.conv13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77 input:50x50x32 output:50x50x64
     self.conv14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113 input:50x50x64 output:50x50x64
+    self.conv15=self.create_conv2d(64,128,dilation=16,padding=16) #receptive field 149
+    input:50x50x64 output:50x50x128
 ```
 * In conv9 we will get an input of 100x100x64 and the output will be 50x50x16.
 * Here instead of maxpooling we used 3x3 with stride 2 for better performance.It reduces the size by 2.
-* Next we will send it conv10,conv11,conv12,conv13,conv14 which will manipulate the no of channnels but not with size.
+* Next we will send it conv10,conv11,conv12,conv13,conv14,conv15 which will manipulate the no of channnels but not with size.
 * **You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10 **
-* In the conv11,conv12,conv13 and conv14. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
+* In the conv11,conv12,conv13,conv14 and conv15. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
 
-* The channels of images followed as 16,32,32,64,64 which is of a embedding type of architecture.
-* **My intuition is that since we need to identify only patterns i thought that 64  channels are good enough.**
+* The channels of images followed as 16,32,32,64,64,128 which is of a embedding type of architecture.
+* **My intuition is that since we need to identify only patterns i thought that 128  channels are good enough.**
 
 * With increase in the dilation the padding is also increased to  maintain the same image size.
 * The below code which we used in forward propagation for the part-3
@@ -781,40 +783,225 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
     output1=self.conv12(output1)
     output1=self.conv13(output1)
     output1=self.conv14(output1)
+    output2=self.conv_depth15(output2)
 ```
 ### PART-4 (final)OF MY CODE
 ![part4](https://github.com/GadirajuSanjayvarma/S15/blob/master/image4.png)
 
-* So after conv8 we can continue like that without decreasing the size but the no of layers will also be increased.
-* So we have to decrease the size of image by maxpooling or 3x3 with stride 2 so that size will be reduced and also the receptive field increses 2 times from now.
-*  So firstly we will look into the code of part-3 convolutions.**I am remianding once again that left and right side structures are same.you can have a look into my video if you didnt understood my architecture at once.**
-* **We can also find a dark thick line beside our convolution path which is skip connection.**
+* In part-4 we have conv16,conv17,upsample,concatenation,conv18,conv19.
+* The code used for the part-4 diagram
 ```
-    # it is a 3x3 convolution with stride2 for decreasing in size of image.
-    self.conv9=self.create_conv2d(64,16,stride=2,padding=1) #receptive field 33 input:100x100x64 output:50x50x16
-    self.conv10=self.create_conv2d(16,16) #receptive field 37 input:50x50x16 output:50x50x16
-    self.conv11=self.create_conv2d(16,32,dilation=2,padding=2) #receptive field 45 input:50x50x16 output:50x50x32
-    self.conv12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57 input:50x50x32 output:50x50x32
-    self.conv13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77 input:50x50x32 output:50x50x64
-    self.conv14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113 input:50x50x64 output:50x50x64
+ self.conv_depth16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185 input-image:50x50x128 output:50x50x64
+    self.conv_depth17=self.create_conv2d(64,64) #receptive field 189 input-image:50x50x64 output:50x50x64
+    self.upsampling2=nn.Upsample((100,100), mode='nearest') #receptive field 193 formula is 2^(no of sampling layers)*(kernalsize-1) 
+    self.conv_depth18=self.create_conv2d(128,128) #receptive field 197 input-image:100x100x128 output:100x100x128
+    self.conv_depth19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201 input:100x100x128 output:100x100x1
+    
 ```
-* In conv9 we will get an input of 100x100x64 and the output will be 50x50x16.
-* Here instead of maxpooling we used 3x3 with stride 2 for better performance.It reduces the size by 2.
-* Next we will send it conv10,conv11,conv12,conv13,conv14 which will manipulate the no of channnels but not with size.
-* **You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10 **
-* In the conv11,conv12,conv13 and conv14. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
+* So from conv15 the output will be 50x50x128 and we will send it to conv16.The output form conv16 will be 50x50x64.
+* Then we will send it to conv17 where the input is 50x50x64 and output is 50x50x64
+* Then we will send it to upsampling because we need to add skip connection to the variable and they should be of same size.So the skip connection is of size 100x100x64 so we need to convert present varible to size 100x100x64 which is of size 50x50x64.
+* So after upsampling we have to concatenate and now we have multiple receptive fields.
+* After concatenation we will have 128 channels  of shape 100x100x128.
+* In conv18 we will convolve on this one and obtain 128 channels of size 100x100 again.
+* In conv19 which is  a final convolution we convert our 128 channels to single channel which will be our depth image.
+* The code which is used in forward propagation is
+```
+    output1=self.conv16(output1)
+    output1=self.conv17(output1)
+    output1=self.upsampling1(output1)
+    output1=torch.cat((output1,self.concat1),1)
+    output1=self.conv18(output1)
+    output1=self.conv19(output1)
+```
 
-* The channels of images followed as 16,32,32,64,64 which is of a embedding type of architecture.
-* **My intuition is that since we need to identify only patterns i thought that 64  channels are good enough.**
+* So finally our receptive filed will be 201x201.My intuition while developing this architecture is i should have good receptive field and i should use dilated convolutions for increase in receptive field and knowing more wider context.
 
-* With increase in the dilation the padding is also increased to  maintain the same image size.
-* The below code which we used in forward propagation for the part-3
+* We should have two blocks so that i can capture textures and pattrens which are enough for mask and deoth dataset.
+* I used an upsampling layer for going back to original size.
 ```
+ self.upsampling2=nn.Upsample((100,100), mode='nearest') 
+```
+* That is the complete architecture.I explained the code for the mask path and it is similar to depth path also.
+* Here is the complete code for the model architecture.
+```
+
+ 
+class Net(nn.Module):
+    """
+    Base network that defines helper functions, summary and mapping to device
+    """
+    def conv2d(self, in_channels, out_channels, kernel_size=(3,3), dilation=1, groups=1, padding=1, bias=False, padding_mode="zeros",stride=1):
+      return [nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, groups=groups, dilation=dilation, padding=padding, bias=bias, padding_mode=padding_mode,stride=stride)]
+ 
+    def separable_conv2d(self, in_channels, out_channels, kernel_size=(3,3), dilation=1, padding=1, bias=False, padding_mode="zeros"):
+      return [nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=kernel_size, groups=in_channels, dilation=dilation, padding=padding, bias=bias, padding_mode=padding_mode),
+              nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=(1,1), bias=bias,padding=0)]
+ 
+    def activate(self, l, out_channels, bn=True, dropout=0, relu=True,max_pooling=0):
+      if(max_pooling>0):
+        l.append(nn.MaxPool2d(2,2))
+      if bn:
+        l.append(nn.BatchNorm2d(out_channels))
+      if dropout>0:
+        l.append(nn.Dropout(dropout))
+      if relu:
+        l.append(nn.ReLU())
+ 
+      return nn.Sequential(*l)
+ 
+    def create_conv2d(self, in_channels, out_channels, kernel_size=(3,3), dilation=1, groups=1, padding=1, bias=False, bn=True, dropout=0, relu=True, padding_mode="circular",max_pooling=0,stride=1):
+      return self.activate(self.conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, groups=groups, dilation=dilation, padding=padding, bias=bias, padding_mode=padding_mode,stride=stride), out_channels, bn, dropout, relu,max_pooling)
+ 
+    def create_depthwise_conv2d(self, in_channels, out_channels, kernel_size=(3,3), dilation=1, padding=1, bias=False, bn=True, dropout=0, relu=True, padding_mode="circular"):
+      return self.activate(self.separable_conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, dilation=dilation, padding=padding, bias=bias, padding_mode=padding_mode),
+                 out_channels, bn, dropout, relu)
+ 
+    def __init__(self, name="Model"):
+        super(Net, self).__init__()
+        self.trainer = None
+        self.name = name
+ 
+    def summary(self, input_size,input_size1): #input_size=(1, 28, 28)
+      summary(self, input_size=[input_size,input_size1])
+ 
+    def gotrain(self,model, optimizer, train_loader, test_loader, epochs, statspath,criterion,writer,scheduler=None, batch_scheduler=False, L1lambda=0):
+      self.trainer = ModelTrainer(model,optimizer, train_loader, test_loader, statspath,criterion,writer,scheduler,batch_scheduler, L1lambda)
+      #print("hello")
+      self.trainer.run(epochs)
+ 
+    def stats(self):
+      return self.trainer.stats if self.trainer else None
+ 
+
+class depth_model_new(Net):
+  def __init__(self,name="Model",dropout_value=0.0):
+    super(depth_model_new,self).__init__(name)
+    #first part of architecture of solving the mask image
+    self.conv1=self.create_conv2d(3,16) #receptive field 3
+    self.conv2=self.create_conv2d(16,16) #receptive field 5
+    self.conv3=self.create_conv2d(16,32) #receptive field 7
+    self.conv4=self.create_conv2d(32,32) #receptive field 9
+    self.conv5=self.create_conv2d(64,64,dilation=2,padding=2) #receptive field 13
+    self.conv6=self.create_conv2d(64,64,dilation=4,padding=4) #receptive field 19
+    self.conv7=self.create_conv2d(64,128,dilation=8,padding=8) #receptive field 29
+    self.conv8=self.create_conv2d(128,64) #receptive field 31
+    self.conv9=self.create_conv2d(64,16,stride=2,padding=1) #receptive field 33
+    self.conv10=self.create_conv2d(16,16) #receptive field 37
+    self.conv11=self.create_conv2d(16,32,dilation=2,padding=2) #receptive field 45
+    self.conv12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57
+    self.conv13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77
+    self.conv14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113
+    self.conv15=self.create_conv2d(64,128,dilation=16,padding=16) #receptive field 149
+    self.conv16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185
+    self.conv17=self.create_conv2d(64,64) #receptive field 189
+    self.upsampling1=nn.Upsample((100,100), mode='nearest') #receptive field 193 formula is 2^(no of sampling layers)*(kernalsize-1)
+    self.conv18=self.create_conv2d(128,128) #receptive field 197
+    self.conv19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201
+    
+    #operations used by our background image
+    self.conv20=self.create_conv2d(3,16) #receptive field 3
+    self.conv21=self.create_conv2d(16,16) #receptive field 5
+    self.conv22=self.create_conv2d(16,32) #receptive field 7
+    self.conv23=self.create_conv2d(32,32) #receptive field 9
+
+    #first part of architecture of solving the depth image
+    self.conv_depth1=self.create_conv2d(3,16) #receptive field 3
+    self.conv_depth2=self.create_conv2d(16,16) #receptive field 5
+    self.conv_depth3=self.create_conv2d(16,32) #receptive field 7
+    self.conv_depth4=self.create_conv2d(32,32) #receptive field 9
+    self.conv_depth5=self.create_conv2d(64,64,dilation=2,padding=2) #receptive field 13
+    self.conv_depth6=self.create_conv2d(64,64,dilation=4,padding=4) #receptive field 19
+    self.conv_depth7=self.create_conv2d(64,128,dilation=8,padding=8) #receptive field 29
+    self.conv_depth8=self.create_conv2d(128,64) #receptive field 31
+    self.conv_depth9=self.create_conv2d(64,16,stride=2,padding=1) #receptive field 33
+    self.conv_depth10=self.create_conv2d(16,16) #receptive field 37
+    self.conv_depth11=self.create_conv2d(16,32,dilation=2,padding=2) #receptive field 45
+    self.conv_depth12=self.create_conv2d(32,32,dilation=4,padding=4) #receptive field 57
+    self.conv_depth13=self.create_conv2d(32,64,dilation=8,padding=8) #receptive field 77
+    self.conv_depth14=self.create_conv2d(64,64,dilation=16,padding=16) #receptive field 113
+    self.conv_depth15=self.create_conv2d(64,128,dilation=16,padding=16) #receptive field 149
+    self.conv_depth16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185
+    self.conv_depth17=self.create_conv2d(64,64) #receptive field 189
+    self.upsampling2=nn.Upsample((100,100), mode='nearest') #receptive field 193 formula is 2^(no of sampling layers)*(kernalsize-1)
+    self.conv_depth18=self.create_conv2d(128,128) #receptive field 197
+    self.conv_depth19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201
+    
+    #operations used by our background image
+    self.conv_depth20=self.create_conv2d(3,16) #receptive field 3
+    self.conv_depth21=self.create_conv2d(16,16) #receptive field 5
+    self.conv_depth22=self.create_conv2d(16,32) #receptive field 7
+    self.conv_depth23=self.create_conv2d(32,32) #receptive field 9
+
+  def forward(self,x1,x2):
+    x1.requires_grad=False
+    x2.requires_grad=False
+    #first part for finding mask
+    
+    # operations of background image
+    bg_image_mask=self.conv20(x2)
+    bg_image_mask=self.conv21(bg_image_mask)
+    bg_image_mask=self.conv22(bg_image_mask)
+    bg_image_mask=self.conv23(bg_image_mask)
+
+    output1=self.conv1(x1)
+    output1=self.conv2(output1)
+    output1=self.conv3(output1)
+    output1=self.conv4(output1)
+    output1=torch.cat((output1,bg_image_mask),1)
+    output1=self.conv5(output1)
+    output1=self.conv6(output1)
+    output1=self.conv7(output1)
+    output1=self.conv8(output1)
+    self.concat1=output1
     output1=self.conv9(output1)
     output1=self.conv10(output1)
     output1=self.conv11(output1)
     output1=self.conv12(output1)
     output1=self.conv13(output1)
     output1=self.conv14(output1)
+    output1=self.conv15(output1)
+    output1=self.conv16(output1)
+    output1=self.conv17(output1)
+    output1=self.upsampling1(output1)
+    output1=torch.cat((output1,self.concat1),1)
+    output1=self.conv18(output1)
+    output1=self.conv19(output1)
+
+
+   # operations on depth image
+    bg_image_depth=self.conv_depth20(x2)
+    bg_image_depth=self.conv_depth21(bg_image_depth)
+    bg_image_depth=self.conv_depth22(bg_image_depth)
+    bg_image_depth=self.conv_depth23(bg_image_depth)
+
+    output2=self.conv_depth1(x1)
+    output2=self.conv_depth2(output2)
+    output2=self.conv_depth3(output2)
+    output2=self.conv_depth4(output2)
+    output2=torch.cat((output2,bg_image_depth),1)
+    output2=self.conv_depth5(output2)
+    output2=self.conv_depth6(output2)
+    output2=self.conv_depth7(output2)
+    output2=self.conv_depth8(output2)
+    self.concat2=output2
+    output2=self.conv_depth9(output2)
+    output2=self.conv_depth10(output2)
+    output2=self.conv_depth11(output2)
+    output2=self.conv_depth12(output2)
+    output2=self.conv_depth13(output2)
+    output2=self.conv_depth14(output2)
+    output2=self.conv_depth15(output2)
+    output2=self.conv_depth16(output2)
+    output2=self.conv_depth17(output2)
+    output2=self.upsampling2(output2)
+    output2=torch.cat((output2,self.concat2),1)
+    output2=self.conv_depth18(output2)
+    output2=self.conv_depth19(output2)
+ 
+    return output1,output2
+
 ```
+# [explaination video of this model in two minutes] 
+
 
