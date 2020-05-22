@@ -712,59 +712,75 @@ def forward(self,x1,x2):
  
 ### PART-2 OF MY CODE
 ![part2](https://github.com/GadirajuSanjayvarma/S15/blob/master/image2.png)
-### A quick remiander that first two paths belong to mask image and last two paths belong to depth image.Both of their implementations are same so initially i will explain the first two paths upto end and last two paths are same as first two paths.So please try to understand and i will also provide a video link for this architecture explaination in youtube by me.
- 
-* So now we can see in that figure that we have input box.
-* So as i said we need to have **** two seperate covoutions ****  for mask and depth image .
-* so i send fg_bg image to conv1 and bg image to conv20 which are mask path.
-* The same fg_bg image and bg image are sent through conv_depth1 and conv_depth20 which are on the right size (last two).
-* The input sizes of two images are same which are 100x100x3.
-* So i send the fg_bg image through conv1,conv2,conv3,conv4.
-* The code for those convolutions are not as detailed because i am using modular code but you can  basically understand.
+* Now we will get an output of100x100x64 channels from those concatenation part.
+# * Now we can observe that the two paths are equal left and right side are equal.
+# * So i will observe the left part which is mask part and you can also understand the depth part.
+* So now we will send the input to conv5,conv6,conv7,conv8.
+* Below is the code to implement those.
 ```
-    self.conv1=self.create_conv2d(3,16) #receptive field 3 input:100x100x3 output:100x100x16
-    self.conv2=self.create_conv2d(16,16) #receptive field 5 input:100x100x16 output:100x100x16
-    self.conv3=self.create_conv2d(16,32) #receptive field 7 input:100x100x16 output:100x100x32
-    self.conv4=self.create_conv2d(32,32) #receptive field 9 input:100x100x32 output:100x100x32
-```
-* So we will get an image with 3 channels and we will proceed with channels 16,16 32,32 which is the order followed in embedding device.But to have greater batch size and faster training i used this architecture.
-* We need to compromise sometimes :).
-* So by self.conv4 we will have 32 channel image and we raeched a receptive field of 9.
-
-* So i send the bg image through conv20,conv21,conv22,conv23.
-* The code for those convolutions are not as detailed because i am using modular code but you can  basically understand.
-```
-    self.conv20=self.create_conv2d(3,16) #receptive field 3
-    self.conv21=self.create_conv2d(16,16) #receptive field 5
-    self.conv22=self.create_conv2d(16,32) #receptive field 7
-    self.conv23=self.create_conv2d(32,32) #receptive field 9
-
-```
-* So we will get an image with 3 channels and we will proceed with channels 16,16 32,32.
-* So by self.conv23 we will have 32 channel image and receptive field will be 9.
-
-### Next we will concatenate the results obtained from self.conv23 with channels 32 and self.conv4 with channels 32 and we will get and output of channel size 64.
-* The code explains clearly on the concatenation part
-```
-def forward(self,x1,x2):
-    x1.requires_grad=False
-    x2.requires_grad=False
-    #first part for finding mask
+    self.conv5=self.create_conv2d(64,64,dilation=2,padding=2) #receptive field 13  input:100x100x64 output:100x100x64
+    self.conv6=self.create_conv2d(64,64,dilation=4,padding=4) #receptive field 19 input:100x100x64 output:100x100x64
+    self.conv7=self.create_conv2d(64,128,dilation=8,padding=8) #receptive field 29 input:100x100x64 output:100x100x128
+    self.conv8=self.create_conv2d(128,64) #receptive field 31 input:100x100x128 output:100x100x64
     
-    # operations of background image
-    bg_image_mask=self.conv20(x2)
-    bg_image_mask=self.conv21(bg_image_mask)
-    bg_image_mask=self.conv22(bg_image_mask)
-    bg_image_mask=self.conv23(bg_image_mask)
-
-    output1=self.conv1(x1)
-    output1=self.conv2(output1)
-    output1=self.conv3(output1)
-    output1=self.conv4(output1)
-    output1=torch.cat((output1,bg_image_mask),1) #we are concatenating and we will get output of                                                     channels
 ```
-* THe basic intuition behind this is the model gets the only necessary features from conv20-conv23
- of background for it's concatenation with conv4 output during backpropagation.
- * The model gets necessary features from conv1-conv4 and we will concatenate them.
- * This is the basic functionality of those convolutions in part-1 picture.
+* So here earlier i talked about a important concept **Receptive Field**
+* So to increase receptive fields we need to use dilated convolutions.
+* Dilated convolutions are used to increase the receptive field by maintaining same kernal size by increasing dilation size.
+```
+The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=dilation+keral_size
+```
+* So the receptive filed increased by 13,19,29,31 respectively.
+
+* **After that conv8 we can see a path generating from it.It is skip connection.SO i will add it to another ouput before ending so that we can have multiple receptive fields.**
+
+* SO by here we completed the part-2 of diagram where we send from conv5,conv6,conv7,conv8.Next we will send to conv9 which we will see in part3.Similar architecture is also followed in right side also which is predicting depth.
+
+* Code where we are sending from conv5-conv8 for part2
+```
+    output1=self.conv5(output1)
+    output1=self.conv6(output1)
+    output1=self.conv7(output1)
+    output1=self.conv8(output1)
+    self.concat1=output1 # this self.concat1 holds the tensors for skip connection.
+```
+* The intuition is that we will send the input through conv5 where our model will try to learn better and better after each convolution.
+
  
+### PART-3 OF MY CODE
+![part3](https://github.com/GadirajuSanjayvarma/S15/blob/master/image3.png)
+* Now we will get an output of100x100x64 channels from those concatenation part.
+# * Now we can observe that the two paths are equal left and right side are equal.
+# * So i will observe the left part which is mask part and you can also understand the depth part.
+* So now we will send the input to conv5,conv6,conv7,conv8.
+* Below is the code to implement those.
+```
+    self.conv5=self.create_conv2d(64,64,dilation=2,padding=2) #receptive field 13  input:100x100x64 output:100x100x64
+    self.conv6=self.create_conv2d(64,64,dilation=4,padding=4) #receptive field 19 input:100x100x64 output:100x100x64
+    self.conv7=self.create_conv2d(64,128,dilation=8,padding=8) #receptive field 29 input:100x100x64 output:100x100x128
+    self.conv8=self.create_conv2d(128,64) #receptive field 31 input:100x100x128 output:100x100x64
+    
+```
+* So here earlier i talked about a important concept **Receptive Field**
+* So to increase receptive fields we need to use dilated convolutions.
+* Dilated convolutions are used to increase the receptive field by maintaining same kernal size by increasing dilation size.
+```
+The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=dilation+keral_size
+```
+* So the receptive filed increased by 13,19,29,31 respectively.
+
+* **After that conv8 we can see a path generating from it.It is skip connection.SO i will add it to another ouput before ending so that we can have multiple receptive fields.**
+
+* SO by here we completed the part-2 of diagram where we send from conv5,conv6,conv7,conv8.Next we will send to conv9 which we will see in part3.Similar architecture is also followed in right side also which is predicting depth.
+
+* Code where we are sending from conv5-conv8 for part2
+```
+    output1=self.conv5(output1)
+    output1=self.conv6(output1)
+    output1=self.conv7(output1)
+    output1=self.conv8(output1)
+    self.concat1=output1 # this self.concat1 holds the tensors for skip connection.
+```
+* The intuition is that we will send the input through conv5 where our model will try to learn better and better after each convolution.
+
+
