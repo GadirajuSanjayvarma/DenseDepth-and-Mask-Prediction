@@ -652,7 +652,7 @@ test_loader=dataloader.load(test)
 * So i divided the model into four parts where i will explain about the four parts of my architecture design with code also.
 
 ### PART-1 OF MY CODE
-![part1](https://github.com/GadirajuSanjayvarma/S15/blob/master/image1.png)
+![part1](https://github.com/GadirajuSanjayvarma/S15/blob/master/image1.jpg)
 
 
 
