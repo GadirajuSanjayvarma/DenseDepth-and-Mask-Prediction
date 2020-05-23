@@ -631,7 +631,8 @@ test_loader=dataloader.load(test)
 * So it is very important to look at the changes the transformations made to your data.
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
-# Model architecture (The Main Engine behind deep learning)
+# Model architecture input-100x100x3,100x100x3 then output-100x100x3,100x100x3,receptive field-201x201 at ending layer (The Main Engine behind deep learning)
+### [Explaination video of this model architecture by me](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ)
 ### * So when i understood the assignment i am very much excited in developing the model.
 ### * Now the input to model is foreground_background image and next one is background image.
 ### * The output to model is depth image and mask image.
@@ -1385,5 +1386,158 @@ ypred~~yactual
   ypred-min_value,yactual-max_value
   ypred-max_value,yactual-min_value
 ```
+
+# optimizer:
+ * Optimizer is very helpful for us when updating the parameters of the model.
+ * So the selection of optimizer depends on the no of training samples.
+ * If you have more no of training examples then you can choose SGD optimizer otherwise we can choose Adam optimizer.
+ * Since we are having 400K training examples we can choose SGD and some people feel like it is a constant optimizer while adam and others are dynamic optimizers but SGD can also be dynamic by using onecyclelr.We can also use momentum which will get us from plateaus.
+ * Below is the code for SGD declaration.
+ ```
+ optimizer = optim.SGD(model.parameters(), lr=0.1,momentum=0.9,nesterov=True)
+ here we are using learning rate 0.1 which i obtained from lr range test which i will discuss later in this ReadMe.
+ momentum and nesterov momentum are helpful  for getting our loss from plateau by giving a push.
+ 
+ ```
+ * The working of SGD is very simple.We are going to call the below code to update parameters
+ ```
+ optimizer.step()
+ ```
+* Here we are going to compute loss by using our loss functions and average it over a batch.
+* Now we are going to backpropagate through the model by using this averaged loss.
+* Here the paarmeters updation is also taken place by this optimizer.
+
+# updation of parametres and every parameter in it and it's extraction in graet detail
+* **Hello sir upto now we learned how i prepared data,normalizing it,loading into batches,model preparation,loss calculation and optimizer.*
+* Now we have done everything for those right and good parameters and we now we will see how the updation of parameters took place.
+* So intially the updation of paarmeters take place by a simple formula and here it is.
+```
+wi=wi-((learning_rate)*(dLoss/dwi)
+
+```
+* Ohh!!.That finished in very fast manner.Okay initially we will subtract each weigth by learning_rate times derivative of loss w.r.t. derivative of weight.
+* Intially we will consider the extarction of learning_rate.
+### Extraction of learning_rate
+* SO learning_rate is the parameter which determinates on which decimal place should our weight updation taks place.
+* So if our learning_rate is 1 then we will only update the real values and we will never update floating values on right side of decimal point.
+* So if our learning rate is so small then we will never update the real values but we will update the decimal values.
+* **So static learning_rate will not help us to increase accuarcy and also good predictions and updation of values in different decimal values.**
+* So Thanks to leslie smith i used onecyclelr.
+#### What is one cycle lr??
+* Onecyclelr is a scheduler which increases the learning rate in cyclic manner.
+* It takes a initial lr,max_lr and min_lr.
+* SO initially it will increase from initial_lr to max_lr and from max_lr to min_lr.
+* SO when we try to look it looks like an cycle
+[one_cycle_lr](https://github.com/GadirajuSanjayvarma/S15/blob/master/onecyclelr.png)
+* Code used for declaration of onecyclelr
+```
+scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=1.0, steps_per_epoch=len(train_loader)+1, epochs=EPOCHS,div_factor=10)
+
+Here we need to update learning rate in otpimizer so we need to send optimizer in this function.
+Our maximum learning rate is 1.0(which is obtained in lr range test which is explained below)
+steps_per_epoch is the no of batches we need to prcess in single image
+epochs is no of epochs we need to process
+div_factor is used to define initial learning rate as initial_lr=max_lr/div_factor
+we also have a parameter called final_div_factor which is used min_learning_rate as mn_lr=initial_lr/final_div_factor
+
+```
+
+## Finding the maximum learnig rate and minimum learning rate
+
+* Here we will use a method called lr Range Test where we will run the model from several epochs while increasing the learning_rate linearly. 
+* We will plot the graph after that and the learnign_rate in which we get highest training accuracy will be the Maximum learning rate.
+* We will divide the maximum learning rate by 10 and we will get the initial learning arte.
+* We will divide the initial_lr by final_div_factor which we get min_lr.
+* In this method we will get max_lr and min_lr.
+* So here is the implementation of the lrRangeTest
+```
+import torch.optim as optim
+from tqdm import tqdm_notebook, tnrange
+import torch.nn.functional as F
+import time
+class lrRangeFinder():
+  def __init__(self,model,dataloader,criterion,optimizer):
+    self.model=model
+    self.dataloader=dataloader
+    self.learning_rates=[]
+    self.training_accuracy=[]
+    self.loss_list=[]
+    self.learning_rate=0.00001
+    self.average_accuracy=0.0
+    self.average_loss=0.0
+    self.criterion=criterion
+    self.optimizer=optimizer
+    self.scheduler=False
+    self.use_amp=False
+  def plot(self,epochs):
+    for i in range(epochs):
+        self.model.train()
+        torch.backends.cudnn.benchmark = True
+        pbar = tqdm_notebook(self.dataloader)
+        self.optimizer.param_groups[0]['lr']=self.learning_rate
+        for data1,data2,target1,target2 in pbar:
+            # get
+            #start1=time.time() 
+            #start=time.time()
+            data1,data2,target1,target2 = data1.to(self.model.device),data2.to(self.model.device),target1.to(self.model.device), target2.to(self.model.device)
+            #print("loading data into cuda time is {}".format(time.time()-start))
+            # Init
+            #start=time.time()
+            optimizer.zero_grad()
+            #print("loading data optimizer zero grad time is {}".format(time.time()-start))
+            # In PyTorch, we need to set the gradients to zero before starting to do backpropragation because PyTorch accumulates the gradients on subsequent backward passes. 
+            # Because of this, when you start your training loop, ideally you should zero out the gradients so that you do the parameter update correctly.
+
+            # Predict
+            #start=time.time()
+            output1,output2 = self.model(data1,data2)
+            #print("loading data into model and getting output time is {}".format(time.time()-start))
+            #start=time.time()
+            output1,output2=output1.squeeze(1),output2.squeeze(1)
+            self.loss1=self.criterion[0](output1,target1+0.00000001)
+            self.loss2=self.criterion[1](output2,target2)
+            self.loss=(self.loss1+self.loss2)
+            #print("calculating loss and getting output time is {}".format(time.time()-start))
+            #Implementing L1 regularization
+            #start=time.time()      
+            if self.use_amp:
+              with amp.scale_loss(self.loss, self.optimizer) as scaled_loss:
+                  scaled_loss.backward()
+            else:
+              self.loss.backward()
+            #print("loss backward into  time is {}".format(time.time()-start))
+            
+            #start=time.time()
+            optimizer.step()
+            #print("optimizer step is {}".format(time.time()-start))
+            #start=time.time()
+            # Update pbar-tqdm
+            correct1 = output1.long().eq(target1.long().view_as(output1.long())).float().mean().item()
+            correct2 = output2.long().eq(target2.long().view_as(output2.long())).float().mean().item()
+
+            correct=(correct1+correct2)/2.0
+            self.average_accuracy+=correct
+            self.average_loss+=self.loss
+            #print("completiion of accuracy calculation time is {}".format(time.time()-start))
+            #print("the learning rate is {}".format(optimizer.param_groups[0]['lr']))
+            #print("completiion of entire batch time is {}".format(time.time()-start1))
+        self.learning_rates.append(self.learning_rate)
+        self.loss_list.append(self.average_loss/len(self.dataloader))
+        self.training_accuracy.append(self.average_accuracy/len(self.dataloader))
+        self.learning_rate*=10
+    return self.learning_rates,self.training_accuracy,self.loss_list        
+
+#optimizer = optim.SGD(model.parameters(), lr=1,momentum=0.9,nesterov=True)
+criterion=[nn.BCEWithLogitsLoss(),nn.L1Loss()]
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+lrFinder=lrRangeFinder(model,train_loader,criterion,optimizer)
+lr,train_accuracy,loss=lrFinder.plot(6)
+```
+* The results are:
+learning_rates=(1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0)
+accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.1582331936673396, 2.5276784294104258, 2.8774419202048906)
+
+[accuaracy vs learning_rates](https://github.com/GadirajuSanjayvarma/S15/blob/master/lr_range_test.png)
+
 
 
