@@ -1560,4 +1560,30 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 ```
 * In this way we will backpropagate the parameters and taking optimizer.step()
 
+# Accuracy calculation
+* So accuracy is the generally defined as how goood our model is predicting.
+* Here we are not doing a classification problem so we are not comparing indexes.
+* So i decide i decide to compare pixel-wise accuarcy.
+* I will compare only real-values in a floating number.
+* We will not do a equality check on the entire number because a floating numbers cannot be equal.
+* SO we will convert it into int format and we will check them.
+* Below is the code for calculation of accurcay.
+```
+ correct1 = output1.long().eq(target1.long().view_as(output1.long())).float().mean().item() # converting them to long and comparing them.
+ correct2 = output2.long().eq(target2.long().view_as(output2.long())).float().mean().item()
+ correct=(correct1+correct2)/2.0 # we are taking average of both accuracies.
+```
+* This is the way we are finding accuracies.
+
+
+# Improving the Speed of training of the model.
+* So here i used a parameter that was to decreases the time by 2.
+*  We have to use that parameter after the model.train() function.
+* Below is the code whoch implements it .
+```
+    self.model.train()
+    torch.backends.cudnn.benchmark = True #this parameter improves speed by 2
+    torch.cuda.empty_cache()  # it is clearing the cache which we will have some memory
+```
+
 
