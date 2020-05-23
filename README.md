@@ -1339,7 +1339,7 @@ Estimated Total Size (MB): 3796.16
 * So For our neural network the loss should be minimum.
 * So there are two terms in this loss functions.
 ```
-* SO the loss function is -(y*log(ypred)+(y-1)*log(1-ypred))
+* SO the loss function is -(y*log(ypred)+(1-y)*log(1-ypred))
 * so let us say y=1 then second term is zero so the loss will be -(log(ypred))
 
 so for loss to be minimum
@@ -1354,6 +1354,36 @@ so for loss to be minimum
 for it to be minimum log(1-ypred) should be maximum..
 For log(1-ypred) to be maximum (1-ypred) should also be maximum.So since it is inside sigmoid function the maximum value is 1.SO to reach maximum value ypred=0.
 So this is the basic intuition why we use this binarycrossentropy for binary classification.
+```
+
+
+## LOSS FUNCTIONS FOR Depth SUB-MODEL
+* So intially the depth images are distribution of values.
+* So when we perform normalisation the most of the values are in between -1 and 1.
+* So i though we can use MSELoss or L1Loss.
+* I thought MSELoss is not good because it will not punish small values effectively.Since we are doing normalisation i thought that most of the values are in between 0 and 1.SO MSELoss is not a good fit for this.
+* I tried with L1Loss and it worked great.It is one of the simplest loss function where we will just simply subtract one predicted pixel with by its actual pixel.It is really simple.
+* I used it but it is not showing any effect until i used **ONECYCLELR** where i will explain why it played most important role.
+* Since it is  distribution of values we can use it and we can find loss across image and backpropagate it. 
+![L1LOSS](https://github.com/GadirajuSanjayvarma/S15/blob/master/loss_function2.png)
+
+### The intuition behind L1Loss of model.
+* My main intuition i need a loss function which will tell the difference between actual pixel and predicted pixel.
+* So since it's effective punishment of all range of values i used L1 loss.
+* The algorithm is so simple such that we will subtract an actual image pixel by it's predicted image pixel and take absolute to it and   average it so that we can get a single value for every one comparision.
+
+#### Maths behind L1Loss.
+* Let us consider the entire loss function as L.
+* So For our neural network the loss should be minimum.
+```
+* SO the loss function is |ypred-yactual|
+so for loss to be minimum
+ypred~~yactual
+* So if it is done then the loss is zero.SO we will tell the neural network that we dont need to change the value.
+* But if ypred is far away from yactual then loss will be maximum and we will update the parameters accordingly.
+* So for loss to be maximum
+  ypred-min_value,yactual-max_value
+  ypred-max_value,yactual-min_value
 ```
 
 
