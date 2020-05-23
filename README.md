@@ -1312,3 +1312,48 @@ Estimated Total Size (MB): 3796.16
 * you can observe the input size is 3 Gb.It is a lot of difference.Now i can have batch size of 40.Before with 160x160 i will have batch size of 8 or 16.
 
 
+# LOSS FUNCTIONS FOR THE MODEL
+
+* So i intially explained that i divided this model into two sub models.
+* First one is predicting mask and second one is predicting depth.
+* Mask and depth are different images.Mask is having only 1 and 0 vlaues while depth image is a distribution of values.
+* So Loss Functions play an important role in this model
+
+## LOSS FUNCTIONS FOR MASK SUB-MODEL
+* So we generally said that the Mask is a combinnation of zeros and ones.
+* So intially we need to give a pixel value either 0 or 1.
+* So when i though about it and i thought my final output must be 0 and 1 only and not any distribution of values.
+* So i used BinaryCrossEntropy.It is generally used for binary classification and it is just perfect for this moment.
+* Here we need to classify a pixel as one or zero.
+* I also explained in the [data preparation section](https://github.com/GadirajuSanjayvarma/S15#mask-calculation-of-foreground_background-image) at we prepared it in a way such cow pixels get value 1 and other pixels get value 0.
+* So i thought BinaryCrossEntropy will be a good fit for this.**I tried different loss functions like L1Loss and MSELoss but they are useful for finding continuous values like distributions but  not discrete values**
+![BCELOSS](https://github.com/GadirajuSanjayvarma/S15/blob/master/loss_function1.png)
+
+### The intuition behind BinaryCrossEntropy.
+* The only difference between Binarycrossentropy and crossentropy is that we have sigmoid in Binarycrossentropy.
+* So the output which we are getting will be in between 0 and 1.
+* But in crossentropy the values will not be in between 0 and 1.
+* So since our target mask values are also 0 and 1 we can use Binary crossentropy.
+#### Maths behind Binary crossentropy.
+* Let us consider the entire loss function as L.
+* So For our neural network the loss should be minimum.
+* So there are two terms in this loss functions.
+```
+* SO the loss function is -(y*log(ypred)+(y-1)*log(1-ypred))
+* so let us say y=1 then second term is zero so the loss will be -(log(ypred))
+
+so for loss to be minimum
+=-(log(ypred)) should be minimum.
+for it to be minimum log(ypred) should be maximum.for it to be maximum ypred should be maximum.
+But since we are using sigmoid function the maximum value will be 1 only.
+
+so let us say y=0 then first term is zero so the loss will be -(log(1-ypred))
+
+so for loss to be minimum
+=-(log(1-ypred)) should be minimum.
+for it to be minimum log(1-ypred) should be maximum..
+For log(1-ypred) to be maximum (1-ypred) should also be maximum.So since it is inside sigmoid function the maximum value is 1.SO to reach maximum value ypred=0.
+So this is the basic intuition why we use this binarycrossentropy for binary classification.
+```
+
+
