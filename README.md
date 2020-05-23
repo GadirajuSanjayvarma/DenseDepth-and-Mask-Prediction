@@ -1539,5 +1539,25 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 
 ![accuaracy vs learning_rates](https://github.com/GadirajuSanjayvarma/S15/blob/master/lr_range_test.png)
 
+# The Derivative of loss wrt parameters
+* So initially we need to find derivative of loss w.r.t to the weights.So we will discuss the propagation of loss.
+* So initially we need to have two sub-modules one is for predicting mask and other is for predicting for depth image.
+* So i will calculate the loss of mask module with BinaryCrossEntropy and i will calculate the depth with L1Loss.
+* I will sum both of these loss and i will propagate with the loss.
+### * So when we come to backpropagation intially we will backpropagate with loss1 while taking loss2 as constant and taking derivative w.r.t loss2 and while loss1 as constant.
+### * So when we are backpropagating w.r.t to loss1 then it will backpropagate through module1 and it will never touch module2 because they both are independent modules.
+* In this way we are backpropagating module1 and module2 through different loss functions.
+* Here Below is the code which is used for backpropagation.
+```
+      criterion=[nn.BCEWithLogitsLoss(),nn.L1Loss()] # loss functions
+      output1,output2 = self.model(data1,data2)    # sending data through model
+      output1,output2=output1.squeeze(1),output2.squeeze(1)
+      self.loss1=self.criterion[0](output1,target1) #finding loss w.r.t BCELoss
+      self.loss2=self.criterion[1](output2,target2) # finding loss w.r.t LLoss
+      self.loss=(self.loss1+self.loss2)  # finding sum of loss 
+      self.loss.backward()   # backward loss  ((dloss/dloss1)+(dloss/dloss2))
+      self.optimizer.step()  # taking optimizer step
+```
+* In this way we will backpropagate the parameters and taking optimizer.step()
 
 
