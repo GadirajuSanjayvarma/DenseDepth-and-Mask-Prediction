@@ -1428,7 +1428,7 @@ wi=wi-((learning_rate)*(dLoss/dwi)
 * It takes a initial lr,max_lr and min_lr.
 * SO initially it will increase from initial_lr to max_lr and from max_lr to min_lr.
 * SO when we try to look it looks like an cycle
-[one_cycle_lr](https://github.com/GadirajuSanjayvarma/S15/blob/master/onecyclelr.png)
+![one_cycle_lr](https://github.com/GadirajuSanjayvarma/S15/blob/master/onecyclelr.png)
 * Code used for declaration of onecyclelr
 ```
 scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=1.0, steps_per_epoch=len(train_loader)+1, epochs=EPOCHS,div_factor=10)
@@ -1537,7 +1537,7 @@ lr,train_accuracy,loss=lrFinder.plot(6)
 learning_rates=(1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0)
 accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.1582331936673396, 2.5276784294104258, 2.8774419202048906)
 
-[accuaracy vs learning_rates](https://github.com/GadirajuSanjayvarma/S15/blob/master/lr_range_test.png)
+![accuaracy vs learning_rates](https://github.com/GadirajuSanjayvarma/S15/blob/master/lr_range_test.png)
 
 
 
