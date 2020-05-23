@@ -1586,4 +1586,48 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
     torch.cuda.empty_cache()  # it is clearing the cache which we will have some memory
 ```
 
+# Okay now I will try to answer the questions you asked us sir.
+### Have you thought about changing data format, channels, etc??
+* Yes sir,i have thought about it.So when we are developing the transparent images we need alpha channels to create transparency.
+* So after laying foreground on background we are converting into them into 3 channels and background into 3 channels.
+* We are also converting dpeth ,mask image into single channel since they are having only black and white pixels and contains in gray mode.
+* So the masks are in initially  RGBA format and we converted it into RGB format.We also have to generate the mask and depth images in cmap="gray" format.
+
+### Have you thought and utilized the fact that you can train on smaller images first and then move to large resolution ones??
+
+* I know we can train on different size images but since all my dataset is of constant size.
+* Foreground_background,background,depth and mask are of constant size 100x100 when they are training.So i didnt use any multi-scale training process.
+
+### How creative you have been, for example, what all loss functions have you tried, have you tried to only solve for 1 problem before solving for both, etc???
+
+* Initially my mobile phone is dead which i am using as hotspot for internet.So due to that i started reading notes i prepared while listening to your class because i dont have nothing to do without internet.
+* So i refered the notes and i remembered all the Main-roots for development of neural network.
+* So initially the depth images and maks images are not same and they have their differences.
+* So i thought of having different sub-modules of similar architecture so that loss propagation would be different and any parameters would not be effected.
+* A clear explaination of my model is provided above with video too.[model_explaination](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-201x201-at-ending-layer-the-main-engine-behind-deep-learning)
+* The loss fucntions i tried are BCEwithLogitLoss,L1Loss,MSELoss.I tried very less functions because i knew the intuition of the neural network working in the discrete(mask) and distributed(depth).So i tried these loss functions and i also explained why i used them in below link  
+* The loss functions i used are BinaryCrossEntropy for mask module and L1Loss for my depth module.So when i calculate loss from both these functions i will backpropagate and partial derivatives will take care to find gradients in way they are created without affecting one another.
+* A clear explaination on loss functions is explaines here[explaination](https://github.com/GadirajuSanjayvarma/S15#loss-functions-for-the-model)
+
+### How creative your DNN is, how many params you have (a DNN without Param count mentioned will not get any evaluation points from us as we won't know did it actually help)
+
+* My deep neural network takes input 100x100x3(fg_bg image),input2 100x100x3(bg_image) and gives output mask(100x100x1),depth(100x100x1).
+* My Network has multiple receptive fields which is having 201x201,40x40 receptive field one for mask and one for depth.
+* My network has two skip connections and two upsampling layers to produce similar image size.
+* For getting 201x201 receptive field as it is reconstruction problem we cannot afford more maxpooling layers.
+* SO i have convolutions which are called dilated convolutions which are increasing receptive fields for same kernal size.
+* The dilation are increasing in this order like 2,4,8,16,16 and they are increasing by 2 times to their previous time.
+* My summary of network architecture looks like this
+Total params: 1,340,224
+Trainable params: 1,340,224
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 3433.23
+Forward/backward pass size (MB): 357.82
+Params size (MB): 5.11
+Estimated Total Size (MB): 3796.16
+-----------------------------------
+* I explained the my network more clearly in this part of readme[model](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-201x201-at-ending-layer-the-main-engine-behind-deep-learning)
+
+
 
