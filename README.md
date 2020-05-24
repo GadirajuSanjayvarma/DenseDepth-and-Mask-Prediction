@@ -1331,7 +1331,7 @@ Estimated Total Size (MB): 3796.16
 * So Loss Functions play an important role in this model
 
 ## LOSS FUNCTIONS FOR MASK SUB-MODEL
-* So we generally said that the Mask is a combinnation of zeros and ones.
+* So we generally said that the Mask is a combination of zeros and ones.
 * So intially we need to give a pixel value either 0 or 1.
 * So when i though about it and i thought my final output must be 0 and 1 only and not any distribution of values.
 * So i used BinaryCrossEntropy.It is generally used for binary classification and it is just perfect for this moment.
@@ -1404,8 +1404,8 @@ ypred~~yactual
  * Since we are having 400K training examples we can choose SGD and some people feel like it is a constant optimizer while adam and others are dynamic optimizers but SGD can also be dynamic by using onecyclelr.We can also use momentum which will get us from plateaus.
  * Below is the code for SGD declaration.
  ```
- optimizer = optim.SGD(model.parameters(), lr=0.1,momentum=0.9,nesterov=True)
- here we are using learning rate 0.1 which i obtained from lr range test which i will discuss later in this ReadMe.
+ optimizer = optim.SGD(model.parameters(), lr=1.0,momentum=0.9,nesterov=True)
+ here we are using learning rate 1.0 which i obtained from lr range test which i will discuss later in this ReadMe.
  momentum and nesterov momentum are helpful  for getting our loss from plateau by giving a push.
  
  ```
@@ -1417,15 +1417,15 @@ ypred~~yactual
 * Now we are going to backpropagate through the model by using this averaged loss.
 * Here the paarmeters updation is also taken place by this optimizer.
 
-# updation of parametres and every parameter in it and it's extraction in graet detail
-* **Hello sir upto now we learned how i prepared data,normalizing it,loading into batches,model preparation,loss calculation and optimizer.*
+# Updation of parameters adn explaination of every parameter in it.
+**Hello sir upto now we learned how i prepared data,normalizing it,loading into batches,model preparation,loss calculation and optimizer.**
 * Now we have done everything for those right and good parameters and we now we will see how the updation of parameters took place.
 * So intially the updation of paarmeters take place by a simple formula and here it is.
 ```
 wi=wi-((learning_rate)*(dLoss/dwi)
 
 ```
-* Ohh!!.That finished in very fast manner.Okay initially we will subtract each weigth by learning_rate times derivative of loss w.r.t. derivative of weight.
+* Ohh!!.That finished in very fast manner.Okay initially we will subtract each weight by learning_rate times derivative of loss w.r.t. derivative of weight.
 * Intially we will consider the extarction of learning_rate.
 ### Extraction of learning_rate
 * SO learning_rate is the parameter which determinates on which decimal place should our weight updation taks place.
@@ -1455,8 +1455,8 @@ we also have a parameter called final_div_factor which is used min_learning_rate
 ## Finding the maximum learnig rate and minimum learning rate
 
 * Here we will use a method called lr Range Test where we will run the model from several epochs while increasing the learning_rate linearly. 
-* We will plot the graph after that and the learnign_rate in which we get highest training accuracy will be the Maximum learning rate.
-* We will divide the maximum learning rate by 10 and we will get the initial learning arte.
+* We will plot the graph after that and the learning_rate in which we get highest training accuracy will be the Maximum learning rate.
+* We will divide the maximum learning rate by 10 and we will get the initial learning rate.
 * We will divide the initial_lr by final_div_factor which we get min_lr.
 * In this method we will get max_lr and min_lr.
 * So here is the implementation of the lrRangeTest
@@ -1563,7 +1563,7 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
       output1,output2 = self.model(data1,data2)    # sending data through model
       output1,output2=output1.squeeze(1),output2.squeeze(1)
       self.loss1=self.criterion[0](output1,target1) #finding loss w.r.t BCELoss
-      self.loss2=self.criterion[1](output2,target2) # finding loss w.r.t LLoss
+      self.loss2=self.criterion[1](output2,target2) # finding loss w.r.t L1Loss
       self.loss=(self.loss1+self.loss2)  # finding sum of loss 
       self.loss.backward()   # backward loss  ((dloss/dloss1)+(dloss/dloss2))
       self.optimizer.step()  # taking optimizer step
@@ -1571,12 +1571,13 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 * In this way we will backpropagate the parameters and taking optimizer.step()
 
 # Accuracy calculation
-* So accuracy is the generally defined as how goood our model is predicting.
+* So accuracy is the generally defined as how good our model is predicting.
 * Here we are not doing a classification problem so we are not comparing indexes.
 * So i decide i decide to compare pixel-wise accuarcy.
 * I will compare only real-values in a floating number.
 * We will not do a equality check on the entire number because a floating numbers cannot be equal.
 * SO we will convert it into int format and we will check them.
+* That means we will convert the entire pixels to integer format and compare onebyone respectively. 
 * Below is the code for calculation of accurcay.
 ```
  correct1 = output1.long().eq(target1.long().view_as(output1.long())).float().mean().item() # converting them to long and comparing them.
@@ -1595,16 +1596,19 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
     torch.backends.cudnn.benchmark = True #this parameter improves speed by 2
     torch.cuda.empty_cache()  # it is clearing the cache which we will have some memory
 ```
-
+* It implements the benchmark alogorithm where it is going to select the best optimized convolution algorithm for our model and decreases time by 2.**It will not work always but luckily it worked for me**
 # RESULTS
 * I totally ran this model for 13 epochs with 88000 images of size 100x100x3.
 * But when i am running my colab gets disconnected at 8 epoch but i am saving checkpoint in the drive.
-* My Colab gets disconncted and output gets cleared.So in google colab you can see the output only for five epochs.
+* My Colab gets disconncted and output gets cleared.So in google colab you can see the output  for next five epochs which i ran so totally we will get 13 epochs.
 * But i save the results in drive folder which are good.
-## * So here are my results and left side image is Groung image and rigth side one is Model prediction.
+## * So here are my results and left side image is Ground truth image and right side one is Model prediction.
 ## * here i Presented three outputs one is mask in some range,mask in range 0-1 and depth image predicted by model.
 * Results are displayed in epoch wise order
 #### Epoch-1
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
 * Masks in some range
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
 * scaling masks in range 0-1
