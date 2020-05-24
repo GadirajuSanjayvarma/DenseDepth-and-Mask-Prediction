@@ -1609,109 +1609,64 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 Masks in some range            |  mask in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
 
 #### Epoch-2
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask2.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale2.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth2.jpg)
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask2.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale2.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth2.jpg)
 #### Epoch-3
-
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask3.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale3.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth3.jpg)
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask3.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale3.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth3.jpg)
 #### Epoch-4
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask4.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale4.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth4.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask4.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale4.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth4.jpg)
 #### Epoch-5
-
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask5.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale5.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth5.jpg)
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask5.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale5.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth5.jpg)
 #### Epoch-6
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask6.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale6.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth6.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask6.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale6.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth6.jpg)
 #### Epoch-7
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask7.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale7.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth7.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask7.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale7.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth7.jpg)
 #### Epoch-8
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask8.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale8.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth8.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask8.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale8.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth8.jpg)
 #### Epoch-9
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask9.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale9.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth9.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask9.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale9.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth9.jpg)
 #### Epoch-10
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask10.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale10.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth10.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask10.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale10.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth10.jpg)
 #### Epoch-11
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask11.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale11.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth11.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask11.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale11.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth11.jpg)
 #### Epoch-12
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask12.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale12.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth12.jpg)
 
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask12.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale12.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth12.jpg)
 #### Epoch-13
-
-* Masks in some range
-![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)
-* scaling masks in range 0-1
-![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg)
-* Depth images
-![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth13.jpg)
+Masks in some range            |  mask in range 0-1    | depth images
+:-------------------------:|:-------------------------:|:-------------------------:
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth13.jpg)
 
 # Okay now I will try to answer the questions you asked us sir.
 ### Have you thought about changing data format, channels, etc??
