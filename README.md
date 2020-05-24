@@ -12,7 +12,7 @@
  * In the same way if we have a deep learning model with tens and thousands of neurons and weights then it  will be wasted if we have no      knowledge about features,patterns,Textures,parts of object and object(just a basic understanding of model) in those weights.
  * So data is having utmost importance in development of neural network
  * Without data millions of skip connections,Millions of receptive fields will get wasted and they would be no use.
- * So i kept it in mind while developing data from my model.
+ * So i kept it in mind while developing data for my model.
  * There are two important steps in the data part of deep learning
     *     Data collection
     *     Data processing in right format so that neural network receives.
@@ -27,7 +27,7 @@
  * So i stared collecting the photos of indian backgrounds with my team mates for assignment 15A.
  * So the foreground object we choose is cow which is the most common animal on roads.
  * So we collected the Background images which are of some indian street photos which were covered with plastic, waste,roads and traffic     etc.
- * We filtered some of images and we spent msot of time for making the background more realistic.
+ * We filtered some of images and we spent most of time for making the background more realistic.
  * Here are some of the images we collected for Background.
  * But after listening to your session we decided that background may or may not  be too realistic.So we also downloaded some animation    photos as background.
  ### background image
@@ -38,7 +38,7 @@
  
  * so our work of collecting background images are completed so now we will start collecting foreground images especially transparent      images.
  * So initially we started collecting the foreground images (in our sense it is cow).We searched on internet about cows and we choose      the pictures where cow is most dominating in the pictures which might results in good depth and transparent images.So we started        collecting the cow images by working as team.
- * After collection of cow images we need to make them transparent.So we used this website called remove.bg where we just upload an        image and it will give the transparent images of foreground pbject by using machine learning.It is really cool.
+ * After collection of cow images we need to make them transparent.So we used this website called remove.bg where we just upload an        image and it will give the transparent images of foreground object by using machine learning.It is really cool.
  [link to remove.bg website](https://www.remove.bg/)
  * So by using this website we obtained the transparent images of cow.
  * However for several we still have to use lasso tool in Photoshop to make the foregrounds really stand out
@@ -48,7 +48,7 @@
  ### Mask Calculation
  * So initially we have this transparent image with four channels while the extra channel is transparency channel
  * So our team looked upon the transparency channel and set the value 0 for pixel value 0 and pixel value 1 for value greater than 0
- * That gives good binary mask which is very good in quality of image.Even though it is not much useful to main assignment it is very       much helpful
+ * That gives good binary mask which is very good in quality of image.Even though it is not much useful to main assignment it is very much helpful to know how to produce the mask
  #### mask image of foreground
  ![transparent cow mask images](https://github.com/GadirajuSanjayvarma/S15/blob/master/masks.png)
  
@@ -61,6 +61,7 @@
   * We almost spend a week on thinking about the placing of an foreground on background using image segmentation.
   * The main idea here is that we will do image segmentation of background image using [this colab](https://colab.research.google.com/github/lexfridman/mit-deep-learning/blob/master/tutorial_driving_scene_segmentation/tutorial_driving_scene_segmentation.ipynb).
   * The output of image will be a combination of some maps.We will try to find best place for our foreground object based on that map.
+  * SO we have to obtain Road and sidewalk map of the image ans we will try to place the cow in that map
   * But after listening to your session i got that we can place the foreground object anywhere.Then we used good approach to place foreground on background
   We planned to pass 2000 images in a single batch to the Depth image generator. Since 1 background will have 2000 images with 100 foregrouds (each 20 times) and another 2000 for same foreground images flipped, we ran the batch twice, second time with foregrounds flipped.
 
@@ -83,7 +84,7 @@ INPUT bg image, list of fg images
 2. run depth for one batch
 3. save depth images of 160x160 in zipfolder
 ```
-* Here we used perspective projection which means that if foreground object is in bottom of image then we will increse its scale
+* Here we used perspective projection which means that if foreground object is in bottom of image then we will increase its scale
   because we assume that it is near to us.
  * If a foreground image is in above portion of image we are going to choose small scale since it is away from camera which is assumed by us.
  ### Example of foreground_background image
@@ -121,15 +122,16 @@ INPUT bg image, list of fg images
  [Here is the link to our colab file for complete data processing steps]()
  
  # Data Loading in Colab file
+ [Link to my dataset folder which contains background images and zip file](https://drive.google.com/drive/folders/1JII8CODaU93vGfdLMfewmZ2tPsEbLgHP?usp=sharing)
  * The data loading means making our data feasible such that our network will accept the data and produce the results.
  * Here the data loading in colab file is divided into many parts.We will explain each of the parts in detail.
  * 1) Bringing the zip file from google drive to our colab virtual environment directory.
  * 2) Extracting the zip file in the local colab virtual environment directory.
  
  ## Bringing the zip file from google drive to our colab virtual environment directory.
- * Now we completed the making of data.we have to load the data into our google colab.We can even work on our drive but the i/o operations performing on drive are very less.So we have to save them intoo our local colab machine.
+ * Now we completed the making of data.we have to load the data into our google colab.We can even work on our drive but the i/o operations performing on drive are very less.So we have to save them into our local colab machine.
  * I just performed the series of steps which worked really well.Since google colab s cloud based engine it is just sharing data so process is very easy.
- * Now initially we have to mount our drive to google colab.So by doing this we will get access to our drive form our colab.This makes life easier for small datasets.
+ * Now initially we have to mount our drive to google colab.So by doing this we will get access to our drive from our colab.This makes life easier for small datasets.
  * Now we have to create folder in drive where we will have the background images and zip file for accessing.
  ### code for mounting our drive
  ```
@@ -138,7 +140,7 @@ INPUT bg image, list of fg images
  
  ```
 * So after mounting drive we will make a directory in colab vm ***data*** where our data will be stored.
-* Now we have to take that folder in drive and drag and drop the folder to our local colab file data
+* Now we have to take our dataset folder which is in drive and drag and drop the folder to our local colab file data
 * After drag and drop our contents section will get struck(i suppose the copying of file is happening).Wait for a minute and **turn off internet and dont restart runtime.After two minutes turn on your internet and let google colab conect itself.**
 * Now open data folder.Surprise!!!!!!!! the data is presented there.We have the zip file and bg images in that.Now when we go to drive we can find that our folder is deleted in drive.
 *  DONT WORRY we can go to trash and restore it(Google is great).
@@ -153,7 +155,7 @@ start=time.time()
 from zipfile import ZipFile
 # Create a ZipFile Object and load sample.zip in it
 #Copy of fgbganddepth_finaldata.zip is name of our zip file
-with ZipFile('Copy of fgbganddepth_finaldata.zip', 'r') as zipObj:
+with ZipFile('Copy of out2.zip', 'r') as zipObj:
 # Extract all the contents of zip file in current directory
   zipObj.extractall()
 print(time.time()-start)
@@ -166,11 +168,11 @@ print(time.time()-start)
  
  # Loading of data in batches for our network
  
- * Loading of data in bacthes is one of the most important part in neural network.
+ * Loading of data in batches is one of the most important part in neural network.
  * Loading of data in batches has many advantages like good loss backpropagation and identifying more generalized features.
  * Hence we prefer loading data in batches to our network.
  The loading of data in batches has several steps:
- * 1) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+ * 1) Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is a step i took for speed).
   * 2) Having an access to all the respective files of images.
   * 3) Making sure we have all the inputs and ouputs in a single list so accessing them would be easier and also shuffling them also            would be easier
   * 4) visualization of the dataset list folder images
@@ -183,28 +185,27 @@ print(time.time()-start)
   * 11) Finally Visualizing the dataset
   
   
-## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is my team personal                  mistake.We forget to resize depth images,So i have to to do it everytime.)
+## Resizing them so that every image follows the rule of architecture(i.e) input and output size.(This is the step i took for speed)
 * One of the mistakes that we did while doing assignments is the size of images.We confirmed the size as 224X224 but we left the size of   background and depth as 448X448.So it is a major issue and it consumes a lot of time.
 * But after realizing this we again ran an script to resize images in such a way we would benefit from both speed and accuracy.So we pick an size 160X160.Then we permanently made those changes in the zip folder.
-* But we have to do resize of background images because i forgot about them and i need to resize them to 160X160 everytime so that all the images is of same size.
+* But when i load my architecture with input size of 160x160 then the total size in ram is 22 GB when when i use the input size as 100X100 then the input size is 3GB which is very good.SO when i am loading images in batches i am resizing images to 100X100.
+* But we have to do resize of background images because i forgot about them and i need to resize them to 100X100 everytime so that all the images is of same size.
 * Generally the resizing took only 1 second bcz we have to resize only 100 background images and since we are copying paths there is no need to have 400K background images.
-* After doing the resize every image is in the shape of 160X160 which is good.
+* After loading images in batches we are doing the resize of every image so the shape will be  100X100 which is good.
 * So these are the resizes which are being done during this assignment.
- 
 
-  
   ## Having an access to all the respective files of images
   * So after extracting the dataset we need to access the files.
-  * One way of accessing of files is by storing the images in a list.NOOO that woulg be memory intensive and takes a lot of memory.
+  * One way of accessing of files is by storing the images in a list.NOOO that would be memory intensive and takes a lot of memory.
   * Next method is by storing the paths.So one advantage is that if we store the images in paths there will be no memory intensive tasks.
   * Next is when we are trying to access the images during training,intially we will read images from paths and will send into neural network.
-  * I followed this approach in a small dataset and for one epoch for loading paths took 44 secinds to complete while one epoch for         loading images took 35 seconds which is  faster but our dataste is larger so we will use loading paths format.
+  * I followed this approach in a small dataset and for one epoch for loading paths took 44 seconds to complete while one epoch for         loading images took 35 seconds which is  faster but our dataset is larger so we will use loading paths format.
   * Below is the code for storing paths of images into a list
-  ### foreground on background code for loading path into list
+  ### foreground_background code for loading path into list
 
 ``` fg_bg_images=[]
 from tqdm import tqdm_notebook
-for i in tqdm_notebook(range(400000)):
+for i in tqdm_notebook(range(88000)):
       fg_bg_images+=["/content/data/dataset_forAssignment/output/images/fgbg{}.jpg".format(str(i).zfill(6))]
 ```
   
@@ -213,7 +214,7 @@ for i in tqdm_notebook(range(400000)):
   
   ```
   bg_images=[]
-for i in tqdm_notebook(range(1,7)):
+for i in tqdm_notebook(range(1,23)):
       for k in range(4000):
         bg_images+=["/content/data/dataset_forAssignment/bg_images/Copy of bgimg{}.jpg".format(str(i).zfill(3))]
   ```
@@ -225,7 +226,7 @@ for i in tqdm_notebook(range(1,7)):
   ```
   
   masks_images=[]
-for i in tqdm_notebook(range(24000)):
+for i in tqdm_notebook(range(88000)):
       masks_images+=["/content/data/dataset_forAssignment/output/masks/mask{}.jpg".format(str(i).zfill(6))]
   ```
   
@@ -233,11 +234,11 @@ for i in tqdm_notebook(range(24000)):
   
   ```
   depth_images=[]
-for i in tqdm_notebook(range(24000)):
+for i in tqdm_notebook(range(88000)):
       depth_images+=["/content/data/dataset_forAssignment/output/depth/fgbg{}.jpg".format(str(i).zfill(6))]
   ```
   
- * In this code we will load the foreground lay on background images **paths** into a list.
+ * In this code we will load the foreground_background images **paths** into a list.
  * This similar approach is used for the depth images,background images and mask images.
  * So now we have access to all the files in the dataset in the format of the paths.
  
@@ -265,7 +266,7 @@ random.shuffle(dataset)
 
 ## Visualization of the dataset folder by using the list.
 * Let us consider the dataset folder is one which contains all the respective nested lists.
-* Now below is the code fro displaying of images in those dataset folder.
+* Now below is the code for displaying of images in those dataset folder.
 ```
 # just some random visualization of the dataset folder
 img1=Image.open(dataset[10][0])  #foreground_background image
@@ -280,9 +281,9 @@ display(img1)
 
 ```
 
-![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset.png)
 ![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset1.png)
 ![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset2.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset.png)
 ![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/visual_dataset3.png)
 
 * So by using this dataset method we have a lot of flexibility for this method.
@@ -318,8 +319,8 @@ dataset.clear()
 ## Calculation of mean and standard deviation
 * Mean and standard deviation are very important for a dataset.The pixel values in an image may be around 0-255.
 * So the gradient will be diminished or overflowed because of the large scale in which the images pixels ranged.
-* So we have to find the mean and standerd deviation in order to be the images in between 0 and 1
-* We will subtract each pixel by it's mean and divide by it's standard deviation in order to be in between 0 and 1
+* So we have to find the mean and standerd deviation in order to be the images in between -1 and 1
+* We will subtract each pixel by it's mean and divide by it's standard deviation in order to be in between -1 and 1
 * So finding mean and standard deviation is very important.
 * So in order for faster calculation of mean and standard deviation i used **cupy which is a gpu version of numpy which is 10 times faster than numpy**.
 * But pytorch doesnt work with cupy so you can use it only for intenesive operation like these where pytorch is not used.
@@ -401,28 +402,9 @@ print(mu, sq/n, std, n)
 
 
 ### code for calculation of mean and standard deviation of masks image
-```
-from tqdm import tqdm_notebook
-from PIL import Image
-import numpy as np
-import cupy as cp 
-'''numpy executes on cpu even though you are on gpu.So i am using cupy which will execute on gpu and 10 times faster than numpy only on larger operations'''
-import glob
-n = 0
-s = cp.zeros(3)
-sq = cp.zeros(3)
-for file in tqdm_notebook(glob.glob('/content/data/dataset_forAssignment/output/masks/*.jpg')):
-  data=Image.open(file)
-  x = cp.array(data)/255
-  s += x.sum(axis=(0,1))
-  sq += cp.sum(cp.square(x), axis=(0,1))
-  n += x.shape[0]*x.shape[1]
+* I didnt applied normalisation transformation for the mask image in order to preserve it's state.
+* So we will aplly only one toTensor() operation on the mask image.
 
-mu = s/n
-std = cp.sqrt((sq/n - cp.square(mu)))
-print(mu, sq/n, std, n)
-```
-* here mu represents mean and std represenst standard deviation which will print the results.
 
 # Main part loading the dataset in the format of batches by creating a class
  * Okay now we entered the first step of creating the images into batches
@@ -430,13 +412,13 @@ print(mu, sq/n, std, n)
 * So initially we will create a class say **get_dataset which inherits from Dataset class**.So usually this is a custom data so we are following this procedure.If this is a predefined dataset in pytorch then it will be in batches and it is a simple process.
 * Now we need to override some functions in the Dataset in our own classes.
  * Pytorch is the most flexible framework for deep learning.Now we have loaded our data in the paths we have to talk about increasing      efficiency of our training loop.
- * So the main power of the fast execution of so many images comes in Vectorization
+ **So the main power of the fast execution of so many images comes in Vectorization**
  * Vectorization means applying a particular operation without using explicit for loops.
  * It is faster by 400 times then normal implicit for loops.
  * So the developers and many people suggested to send images in format of batches so that we can utilize
    the power of Vectorization.
    * So pytorch provided a predefined class Dataset which helps us to return images in format of batches.
-   * So there are two methods inside the Dataset class which are ``` __len__``` and ```get_item__``` which are very impoertant methods.
+   * So there are two methods inside the Dataset class which are ``` __len__``` and ```get_item__``` which are very important methods.
    * The first one will return the no of samples in the given dataset and second one is where you will get an index and you have to return  the input and output based on that index.
    * It is very simple and efficient.We can also apply transformations in this class while returning the image which provide so much convenience for us.
    * Below is the code i used to produce images in batches.
@@ -453,9 +435,9 @@ print(mu, sq/n, std, n)
   def __getitem__(self,index):
       if(torch.is_tensor(index)):
         index=index.tolist(index)
-      input1=Image.open(self.fg_bgimage[index])
-      input1.thumbnail((100,100))
-      input1=np.asarray(input1)
+      input1=Image.open(self.fg_bgimage[index]) #opening the image by using Image.open() function
+      input1.thumbnail((100,100))  # resizing image to 100x100 by using Image.thumbnail() function
+      input1=np.asarray(input1)    # converting the image to numpy array
       input2=(Image.open(self.bg_image[index]))
       input2=np.asarray(input2)
       output1=((Image.open(self.mask_image[index])))
@@ -467,13 +449,12 @@ print(mu, sq/n, std, n)
       output1=output1.transpose(1,0)/255
       output2=output2.transpose(1,0)
       if(self.transform):
-        input1=self.transform[0](input1)
+        input1=self.transform[0](input1) # applying the transformations on the image where the transform is the list containing them.
         input2=self.transform[1](input2)
         output1=self.transform[2](output1)
         output2=self.transform[3](output2)
       return input1,input2,output1,output
       ```
-      
 ```
 
 * Here we have a class named get_dataset which inherits properties from Dataset which is imported from pre-defined **torch.utils.data** function.
@@ -481,9 +462,9 @@ print(mu, sq/n, std, n)
 * In the function **__len__** we need to return the length of images or objects in which the class need to act on.
 * The function **__getitem__()** is one of the most important functions.Here the function will give an index as input to function and  we need to return values like input and output based on index.Like if you are having input and output in lists we can return the values by just specifying the list[index].By here you would have understood the flexibilty of pytorch.
 * Since I am using paths i need to read the image in path and also need to apply transfromations where normalization should be done for better results.
-* **Important thing.Intially i have images in size of 160x160 but i resized it to 100X100 for better batch size and i will explain why i did that in model section sir.**
+* **Important thing.Intially i have images in size of 160x160 but i resized it to 100X100 for better batch size and i will explain why i did that in model section  and [link](https://github.com/GadirajuSanjayvarma/S15#why-i-am-not-using-160x160-instead-of-100x100-in-image-size) for why i converted from 160x160 to 100x100.**
 * So for every image i resized it to 100x100 after reading image and i will apply tranformations.
-* we can just return values form that function in any order but **remember you need to follow that order through out the project**.
+* we can just return values from that function in any order but **remember you need to follow that order through out the project**.
 
 ### Errors i faced with dataloading into class:
 * As i mentioned above that we can use cupy if we are having gpu which is used for faster accessing  but pytorch falis to initialize the runtime with cupy otherwise the speed should have improved by 10 times.
@@ -498,47 +479,48 @@ print(mu, sq/n, std, n)
 * When we talk about the transformations i applied normalization on both foreground_background image,background image, depth image in both train and test transformations.
 * The normalisation is important because it scales the value to be in between -1 to 1. 
 * I cannot use cutdown or random erasing in this beacause it is a reconstruction problem.
-* **It is not a classification problem like even though some portion of object is missing i can tell it as cow.Here we need mask of image so if some portion of image is missing then it should not be there in mask also. **
+**It is not a classification problem like even though some portion of object is missing i can tell it as cow.Here we need mask of image so if some portion of image is missing then it should not be there in mask also.**
 * Cutdown and random erasing follows random approach so it will also be difficult if we change our mask according to the ranodm erasing or  cutout.
 * So i didint thought about the cutdown or random erasing techinques.
 ### Transfromations applied to foreground_background data
 * For foreground_background image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
-* So normalization is important and i used the above code for finding mean and standard deviation values.
+* So normalization is important and i used the above [code](https://github.com/GadirajuSanjayvarma/S15#calculation-of-mean-and-standard-deviation) for finding mean and standard deviation values.
 * I did not apply the random erasing and cutout approach.That is the only transformation i applied.
 * I tried applying **RGBshift** but albumentations is showing some error.So i did not applied that. 
-* **I thought that my network should see the entire image without any disturbance so that reconstruction cna be done properly**
+* **I thought that my network should see the entire image without any disturbance so that reconstruction can be done properly**
 
 ### Transfromations applied to background data
 * For background image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
-* So normalization is important and i used the above code for finding mean and standard deviation values.
+* So normalization is important and i used the above [code](https://github.com/GadirajuSanjayvarma/S15#calculation-of-mean-and-standard-deviation) for finding mean and standard deviation values.
 * I did not apply the random erasing and cutout approach.That is the only transformation i applied.
 * I tried applying **RGBshift** but albumentations is showing some error.So i did not applied that. 
-* **I thought that my network should see the entire image without any disturbance so that reconstruction cna be done properly**
+* **I thought that my network should see the entire image without any disturbance so that reconstruction can be done properly**
 ### Transfromations applied to depth data
 * So depth data is very important so i also applied the normalization to it because it is having distribution of values.
 * The values are in range of 0-255
 * For depth image data i applied the normalization values to be in range of -1 to 1 so that different layers of kernals will not work on different range of values.
-* So normalization is important and i used the above code for finding mean and standard deviation values.
-* That is the only transfromation i have in mind of applying that.Because the depth image is an transformation we should not alter it.
-### Transfromations applied to mask data
-* So when i tried doing this assignment and i ahve to predict mask i have an idea on how mask should be.
+* So normalization is important and i used the above [code](https://github.com/GadirajuSanjayvarma/S15#calculation-of-mean-and-standard-deviation) for finding mean and standard deviation values.
+* That is the only transfromation i have in mind of applying that.Because the depth image is an ooutput and plays important part we should not alter it.
+### Transformations applied to mask data
+* So when i tried doing this assignment and i have to predict mask i have an idea on how mask should be.
 * It should contain only two values 0 and 1.
 * The normalization should not be applied on mask since it is not a distribution of values.
-* So i didnt apply any transformatioms on mask since it is already in between 0 -1 and it is already good for gradient flow.
+* So i didnt apply any transformations on mask since it is already in between 0 -1 and it is already good for gradient flow.
 * So the mask is going into the network as it is.
 
 ### Below is the code for transformations of inputs and outputs.
+* Link to github file for [AlbumentationsTransforms](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4datatransforms.py)
 ```
 from eva4datatransforms import AlbumentationTransforms
 import albumentations.augmentations.transforms as A
 
-# 12k images
-mean_depth=(0.59492888)
-std_depth=(0.25569079)
-mean_fgbg=(0.4802258,0.52770951,0.52247662)
-std_fgbg=(0.22515411,0.22905536,0.30719277)
-mean_bg=(0.47247124,0.5431315,0.5466434)
-std_bg=(0.21798535,0.22106706,0.30929284)
+ #88k images
+mean_depth=(0.56502286)
+std_depth=(0.25914103)
+mean_fgbg=(0.50269264,0.55886688,0.53427412)
+std_fgbg=(0.22865243,0.2259038,0.2852704)
+mean_bg=(0.4989028,0.57832073,0.55895807)
+std_bg=(0.22249018,0.21543007,0.28253565)
 background_transforms=AlbumentationTransforms(
   [
    
@@ -611,7 +593,11 @@ test_transforms=(fgbg_transforms1,background_transforms1,mask_transforms1,depth_
 
 * So after defining the transformations and get_dataset class we need to define a method to call it.
 * Below is a code that is used to define the dataset in batches
+* link to [eva4dataloaders](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4dataloaders.py)
+* link to [eva4batchLoader](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4batchLoader.py)
 ```
+from eva4batchLoader import get_dataset
+from eva4dataloaders import DataLoader
 train=get_dataset(train_dataset,transforms=train_transforms)
 test=get_dataset(test_dataset,transforms=test_transforms)
 from eva4dataloaders import DataLoader
@@ -620,7 +606,7 @@ train_loader=dataloader.load(train)
 test_loader=dataloader.load(test)
 ```
 * Here get_dataset is a function which we defined above which will take train_dataset which is  a list that takes the index and return the values according to batches.
-* transforms are the Albumentations transfromations which we defined for the images.
+* transforms are the Albumentations transformations which we defined for the images.
 * Dataloader is the the main component which is going to call the images in batches.
 * It will define parameteres like batch_size,pin_memory and num_workers which are used for parallel processing.
 * It is going to change the parameters based on the device in which model is running.
@@ -629,6 +615,31 @@ test_loader=dataloader.load(test)
 ## Visualizing the dataset.
 * So intially we need to visualize the data after transformations because it will give us insight on what our model is looking and how it is looking the dataset.
 * So it is very important to look at the changes the transformations made to your data.
+* Below is the code we used for visualization of dataset
+```
+dataiter=iter(train_loader)
+input1,input2,output1,output2=dataiter.next()
+print(input1.shape)
+print(input2.shape)
+print(output1.shape)
+print(output2.shape)
+plt.imshow(input1[0].numpy().transpose(1,2,0))
+plt.show()
+plt.imshow(input2[0].numpy().transpose(1,2,0))
+plt.show()
+plt.imshow(output1[0].numpy(),cmap="gray")
+plt.show()
+plt.imshow(output2[0].numpy(),cmap="gray")
+plt.show()
+
+```
+* The output for visualizing the dataset
+
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/transforms_visual1.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/transforms_visual2.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/transforms_visual3.png)
+![visual_dataset](https://github.com/GadirajuSanjayvarma/S15/blob/master/transforms_visual4.png)
+
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
 # Model architecture input-100x100x3,100x100x3 then output-100x100x3,100x100x3,receptive field-201x201 at ending layer (The Main Engine behind deep learning)
