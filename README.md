@@ -1586,6 +1586,68 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
     torch.cuda.empty_cache()  # it is clearing the cache which we will have some memory
 ```
 
+# RESULTS
+* I totally ran this model for 13 epochs with 88000 images of size 100x100x3.
+* But when i am running my colab gets disconnected at 8 epoch but i am saving checkpoint in the drive.
+* My Colab gets disconncted and output gets cleared.So in google colab you can see the output only for five epochs.
+* But i save the results in drive folder which are good.
+## * So here are my results and left side image is Groung image and rigth side one is Model prediction.
+## * here i Presented three outputs one is mask in some range,mask in range 0-1 and depth image predicted by model.
+* Results are displayed in epoch wise order
+#### Epoch-1
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+
+#### Epoch-2
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-3
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-4
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-5
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-6
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-7
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-8
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-9
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-10
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-11
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-12
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+#### Epoch-13
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)
+![mask_scale](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg)
+![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
+
 # Okay now I will try to answer the questions you asked us sir.
 ### Have you thought about changing data format, channels, etc??
 * Yes sir,i have thought about it.So when we are developing the transparent images we need alpha channels to create transparency.
