@@ -1618,6 +1618,7 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 * SO i have convolutions which are called dilated convolutions which are increasing receptive fields for same kernal size.
 * The dilation are increasing in this order like 2,4,8,16,16 and they are increasing by 2 times to their previous time.
 * My summary of network architecture looks like this
+```
 Total params: 1,340,224
 Trainable params: 1,340,224
 Non-trainable params: 0
@@ -1627,7 +1628,75 @@ Forward/backward pass size (MB): 357.82
 Params size (MB): 5.11
 Estimated Total Size (MB): 3796.16
 -----------------------------------
+```
 * I explained the my network more clearly in this part of readme[model](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-201x201-at-ending-layer-the-main-engine-behind-deep-learning)
 
+# How creative you have been while using data augmentation, and why did you pick those augmentations??
+* Data augumentation is used for greater more accuracy.So intially when we consider to increase the accuracy we need to increase the data exponentially.
+* But when we try to increase the data it is very difficult process so we will go with data augmentations which will try to increase the training accuracy.
+* So when we go with background image we will apply transformations  normalisation on foreground_background image,depth and mask image.
+* So during mask there is a combination of 1 and 0 only.So we will not apply any transformations on it during mask so we will not change any values.
+* A great explaination of transformations and data augumetation is explained in this [link](https://github.com/GadirajuSanjayvarma/S15#applying-transformations-to-datasets)
 
+# colab gives you less than 9-10 hours, then how did you manage creatively compute for days
+* Yes,colab gives 9-10 hours of time.So We need to use time effectively.
+* One of the main problem is that we are getting input/output error.
+* Drive is giving only limited access to google colaboratory.So we need to store that file in the google colab virtual machine directory and we need to access that.
+* We can save checkpoint of model in our drive and we can load the model while we are trying the continue the training.
+* Here is the code for saving the model in our drive
+```
+torch.save(self.model.state_dict(), f"{self.path}/{self.model.name}.pt")
+```
+* Here is the code for loading the model from drive into the local model
+```
+model.load_state_dict(torch.load("/content/drive/My Drive/depth_model_dilated.pt"))
+```
+* We will use a parameter in model.train() in our train function which we will increase trainng speed by 2.
+* The below code used for increasing training time.
+```
+ self.model.train()
+    torch.backends.cudnn.benchmark = True #parameter used for increasing training time by 2.
+    torch.cuda.empty_cache()
+    pbar = tqdm_notebook(self.dataloader)
+    for data1,data2,target1,target2 in pbar:
+      .....
+      .....
+      .....
+      .....
+```
+# Have you done any analysis on how much time each block (dnn, data prep, loss calc, etc) takes (basic python "timeit" at least!)??
 
+* I have done it and it is very helpful.
+* So my model takes most of the time in loss.backward() function.
+* It takes most of time because it has to update the parameters and find the gradients of weights.
+* I generally started using it while the time spent is very high and loss.backward() fucntion takes most of the time.
+* Second function that is taking most time is data.to(cuda) function whcih takes most of the time.
+* Time spent in the entire training loop
+```
+loading data into cuda then time is 0.002600431442260742
+executing statement optimizer zero grad time is 0.00025963783264160156
+loading data into model and getting output time is 2.4460830688476562
+calculating loss and getting output time is 0.03791546821594238
+loss backward into  time is 7.759066104888916
+optimizer step time is 0.17007899284362793
+completion of accuracy calculation time is 0.9137403964996338
+completion of entire batch time is 11.33277153968811
+```
+* As we see the loss.backward() fucntion takes more time.
+
+# we are now talking about the accuracy of the depth map and area of the foreground. How would you present your accuracy now?
+
+* As it is reconstruction problem we need to compare the pixels of two images.
+* So i will compare the two pixels respectively and we will check whether they are equal or not.We will check only real values not decimal values because the decimal values may or maynot be equal.
+* We will compare pixels to compute the accuracy.
+
+```
+      correct1 = output1.long().eq(target1.long().view_as(output1.long())).float().mean().item()
+      correct2 = output2.long().eq(target2.long().view_as(output2.long())).float().mean().item()
+      correct=(correct1+correct2)/2.0
+```
+* This above code is used to compute the accuracy.
+
+# have you just thrown some logs/numbers on the screen or have actually presented the visual results as well.
+* I have presented the accuracy with the pictures of masks,scaled masks(0-1) and depth images.I have represented the accuracies and pictures.
+* You can also find this link [here]()
