@@ -509,7 +509,7 @@ print(mu, sq/n, std, n)
 * So the mask is going into the network as it is.
 
 ### Below is the code for transformations of inputs and outputs.
-* Link to github file for [AlbumentationsTransforms](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4datatransforms.py)
+* Link to github file for [eva4datatransforms](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4datatransforms.py)
 ```
 from eva4datatransforms import AlbumentationTransforms
 import albumentations.augmentations.transforms as A
