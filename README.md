@@ -642,7 +642,7 @@ plt.show()
 
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
-# Model architecture input-100x100x3,100x100x3 then output-100x100x3,100x100x3,receptive field-201x201 at ending layer (The Main Engine behind deep learning)
+# Model architecture input-100x100x3,100x100x3 then output-100x100x3,100x100x3,receptive field-205x205,39x39 at ending layer (The Main Engine behind deep learning)
 ### [Explaination video of this model architecture by me](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ)
 ### * So when i understood the assignment i am very much excited in developing the model.
 ### * Now the input to model is foreground_background image and next one is background image.
@@ -653,8 +653,9 @@ plt.show()
 ### * So we need to figure out a way that we need to have two seperate convolutions for both outputs and seperate loss functions for both of them.
 ### * i tried many architectures but the results were not good.
 ### * I revised the entire notes i prepared from these 15  sessions i got down some important points.
-### * Receptive field when i am preparing the architecture concept of receptive field is completely out of my mind.
-### * So i implemented it and got good receptive field of 200x200 for input image size 100x100 by using dilated convolutions which is good.
+## * Receptive field 
+### when i am preparing the architecture concept of receptive field is completely out of my mind.
+### * So i implemented it and got good receptive field of 205x205,39x39 for input image size 100x100,100x100 by using dilated convolutions which is good.
 ### * Thank god i prepared the notes.
 
 *  So here is the visual representation of my model using tensorboard.
@@ -665,7 +666,7 @@ plt.show()
 
 ### PART-1 OF MY CODE
 ![part1](https://github.com/GadirajuSanjayvarma/S15/blob/master/image1.jpg)
-### A quick remiander that first two paths belong to mask image and last two paths belong to depth image.Both of their implementations are same so initially i will explain the first two paths upto end and last two paths are same as first two paths.So please try to understand and i will also provide a video link for this architecture explaination in youtube by me.
+### A quick remiander that first two paths belong to mask image module and last two paths belong to depth image module.Both of their implementations are same so initially i will explain the first two paths upto end and last two paths are same as first two paths.So please try to understand and i will also provide a video link for this architecture explaination in youtube by me [link](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ).
  
 * So now we can see in that figure that we have input box.
 * So as i said we need to have **** two seperate covoutions ****  for mask and depth image .
@@ -687,10 +688,10 @@ plt.show()
 * So i send the bg image through conv20,conv21,conv22,conv23.
 * The code for those convolutions are not as detailed because i am using modular code but you can  basically understand.
 ```
-    self.conv20=self.create_conv2d(3,16) #receptive field 3
-    self.conv21=self.create_conv2d(16,16) #receptive field 5
-    self.conv22=self.create_conv2d(16,32) #receptive field 7
-    self.conv23=self.create_conv2d(32,32) #receptive field 9
+    self.conv20=self.create_conv2d(3,16) #receptive field 3 #receptive field 3 input:100x100x3 output:100x100x16
+    self.conv21=self.create_conv2d(16,16) #receptive field 5 input:100x100x16 output:100x100x16
+    self.conv22=self.create_conv2d(16,32) #receptive field 7 input:100x100x16 output:100x100x32
+    self.conv23=self.create_conv2d(32,32) #receptive field 9 input:100x100x32 output:100x100x32
 
 ```
 * So we will get an image with 3 channels and we will proceed with channels 16,16 32,32.
@@ -705,16 +706,17 @@ def forward(self,x1,x2):
     #first part for finding mask
     
     # operations of background image
-    bg_image_mask=self.conv20(x2)
-    bg_image_mask=self.conv21(bg_image_mask)
-    bg_image_mask=self.conv22(bg_image_mask)
-    bg_image_mask=self.conv23(bg_image_mask)
+     # operations of background image
+    bg_image_mask=self.conv20(x2) #receptive field 3
+    bg_image_mask=self.conv21(bg_image_mask) #receptive field 5
+    bg_image_mask=self.conv22(bg_image_mask) #receptive field 7
+    bg_image_mask=self.conv23(bg_image_mask) #receptive field 9
 
-    output1=self.conv1(x1)
-    output1=self.conv2(output1)
-    output1=self.conv3(output1)
-    output1=self.conv4(output1)
-    output1=torch.cat((output1,bg_image_mask),1) #we are concatenating and we will get output of                                                     channels
+    output1=self.conv1(x1) #receptive field 3
+    output1=self.conv2(output1) #receptive field 5
+    output1=self.conv3(output1) #receptive field 7
+    output1=self.conv4(output1) #receptive field 9
+    output1=torch.cat((output1,bg_image_mask),1) 9 #we are concatenating and we will get output of                                                     channels
 ```
 * THe basic intuition behind this is the model gets the only necessary features from conv20-conv23
  of background for it's concatenation with conv4 output during backpropagation.
@@ -726,7 +728,7 @@ def forward(self,x1,x2):
 ![part2](https://github.com/GadirajuSanjayvarma/S15/blob/master/image2.png)
 * Now we will get an output of100x100x64 channels from those concatenation part.
 # * Now we can observe that the two paths are equal left and right side are equal.
-# * So i will observe the left part which is mask part and you can also understand the depth part.
+# * So i will explain the left part which is mask part and you can also understand the depth part.
 * So now we will send the input to conv5,conv6,conv7,conv8.
 * Below is the code to implement those.
 ```
@@ -750,10 +752,10 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 
 * Code where we are sending from conv5-conv8 for part2
 ```
-    output1=self.conv5(output1)
-    output1=self.conv6(output1)
-    output1=self.conv7(output1)
-    output1=self.conv8(output1)
+    output1=self.conv5(output1) #receptive field 13
+    output1=self.conv6(output1) #receptive field 19
+    output1=self.conv7(output1) #receptive field 29
+    output1=self.conv8(output1) #receptive field 31
     self.concat1=output1 # this self.concat1 holds the tensors for skip connection.
 ```
 * The intuition is that we will send the input through conv5 where our model will try to learn better and better after each convolution.
@@ -764,7 +766,7 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 
 * So after conv8 we can continue like that without decreasing the size but the no of layers will also be increased.
 * So we have to decrease the size of image by maxpooling or 3x3 with stride 2 so that size will be reduced and also the receptive field increses 2 times from now.
-*  So firstly we will look into the code of part-3 convolutions.**I am remianding once again that left and right side structures are same.you can have a look into my video if you didnt understood my architecture at once.**
+*  So firstly we will look into the code of part-3 convolutions.**I am reminding once again that left and right side structures are same.you can have a look into my video if you didnt understood my architecture at once.**
 * **We can also find a dark thick line beside our convolution path which is skip connection.**
 ```
     # it is a 3x3 convolution with stride2 for decreasing in size of image.
@@ -789,13 +791,12 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * With increase in the dilation the padding is also increased to  maintain the same image size.
 * The below code which we used in forward propagation for the part-3
 ```
-    output1=self.conv9(output1)
-    output1=self.conv10(output1)
-    output1=self.conv11(output1)
-    output1=self.conv12(output1)
-    output1=self.conv13(output1)
-    output1=self.conv14(output1)
-    output2=self.conv_depth15(output2)
+    output1=self.conv9(output1) #receptive field 33
+    output1=self.conv10(output1) #receptive field 37
+    output1=self.conv11(output1) #receptive field 45
+    output1=self.conv12(output1) #receptive field 57
+    output1=self.conv13(output1) #receptive field 77
+    output1=self.conv14(output1) #receptive field 113
 ```
 ### PART-4 (final)OF MY CODE
 ![part4](https://github.com/GadirajuSanjayvarma/S15/blob/master/image4.png)
@@ -803,11 +804,11 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * In part-4 we have conv16,conv17,upsample,concatenation,conv18,conv19.
 * The code used for the part-4 diagram
 ```
- self.conv_depth16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185 input-image:50x50x128 output:50x50x64
-    self.conv_depth17=self.create_conv2d(64,64) #receptive field 189 input-image:50x50x64 output:50x50x64
+ self.conv16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185 input-image:50x50x128 output:50x50x64
+    self.conv17=self.create_conv2d(64,64) #receptive field 189 input-image:50x50x64 output:50x50x64
     self.upsampling2=nn.Upsample((100,100), mode='nearest') #receptive field 193 formula is 2^(no of sampling layers)*(kernalsize-1) 
-    self.conv_depth18=self.create_conv2d(128,128) #receptive field 197 input-image:100x100x128 output:100x100x128
-    self.conv_depth19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201 input:100x100x128 output:100x100x1
+    self.conv18=self.create_conv2d(128,128) #receptive field 197,31 input-image:100x100x128 output:100x100x128
+    self.conv19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201 input:100x100x128 output:100x100x1
     
 ```
 * So from conv15 the output will be 50x50x128 and we will send it to conv16.The output form conv16 will be 50x50x64.
@@ -819,15 +820,15 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * In conv19 which is  a final convolution we convert our 128 channels to single channel which will be our depth image.
 * The code which is used in forward propagation is
 ```
-    output1=self.conv16(output1)
-    output1=self.conv17(output1)
-    output1=self.upsampling1(output1)
-    output1=torch.cat((output1,self.concat1),1)
-    output1=self.conv18(output1)
-    output1=self.conv19(output1)
+   output1=self.conv16(output1) #receptive field 185
+    output1=self.conv17(output1) #receptive field 189
+    output1=self.upsampling1(output1) #receptive field 193
+    output1=torch.cat((output1,self.concat1),1) #receptive field 197,31
+    output1=self.conv18(output1) #receptive field 201,35
+    output1=self.conv19(output1) #receptive field 205,39
 ```
 
-* So finally our receptive filed will be 201x201.My intuition while developing this architecture is i should have good receptive field and i should use dilated convolutions for increase in receptive field and knowing more wider context.
+* So finally our receptive filed will be 205x205 ,39x39.My intuition while developing this architecture is i should have good receptive field and i should use dilated convolutions for increase in receptive field and knowing more wider context.
 
 * We should have two blocks so that i can capture textures and pattrens which are enough for mask and deoth dataset.
 * I used an upsampling layer for going back to original size.
@@ -838,7 +839,6 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * Here is the complete code for the model architecture.
 ```
 
- 
 class Net(nn.Module):
     """
     Base network that defines helper functions, summary and mapping to device
@@ -886,9 +886,9 @@ class Net(nn.Module):
       return self.trainer.stats if self.trainer else None
  
 
-class depth_model_new(Net):
+class depth_mask_model(Net):
   def __init__(self,name="Model",dropout_value=0.0):
-    super(depth_model_new,self).__init__(name)
+    super(depth_mask_model,self).__init__(name)
     #first part of architecture of solving the mask image
     self.conv1=self.create_conv2d(3,16) #receptive field 3
     self.conv2=self.create_conv2d(16,16) #receptive field 5
@@ -951,70 +951,69 @@ class depth_model_new(Net):
     #first part for finding mask
     
     # operations of background image
-    bg_image_mask=self.conv20(x2)
-    bg_image_mask=self.conv21(bg_image_mask)
-    bg_image_mask=self.conv22(bg_image_mask)
-    bg_image_mask=self.conv23(bg_image_mask)
+    bg_image_mask=self.conv20(x2) #receptive field 3
+    bg_image_mask=self.conv21(bg_image_mask) #receptive field 5
+    bg_image_mask=self.conv22(bg_image_mask) #receptive field 7
+    bg_image_mask=self.conv23(bg_image_mask) #receptive field 9
 
-    output1=self.conv1(x1)
-    output1=self.conv2(output1)
-    output1=self.conv3(output1)
-    output1=self.conv4(output1)
-    output1=torch.cat((output1,bg_image_mask),1)
-    output1=self.conv5(output1)
-    output1=self.conv6(output1)
-    output1=self.conv7(output1)
-    output1=self.conv8(output1)
-    self.concat1=output1
-    output1=self.conv9(output1)
-    output1=self.conv10(output1)
-    output1=self.conv11(output1)
-    output1=self.conv12(output1)
-    output1=self.conv13(output1)
-    output1=self.conv14(output1)
-    output1=self.conv15(output1)
-    output1=self.conv16(output1)
-    output1=self.conv17(output1)
-    output1=self.upsampling1(output1)
-    output1=torch.cat((output1,self.concat1),1)
-    output1=self.conv18(output1)
-    output1=self.conv19(output1)
+    output1=self.conv1(x1) #receptive field 3
+    output1=self.conv2(output1) #receptive field 5
+    output1=self.conv3(output1) #receptive field 7
+    output1=self.conv4(output1) #receptive field 9
+    output1=torch.cat((output1,bg_image_mask),1) 9
+    output1=self.conv5(output1) #receptive field 13
+    output1=self.conv6(output1) #receptive field 19
+    output1=self.conv7(output1) #receptive field 29
+    output1=self.conv8(output1) #receptive field 31
+    self.concat1=output1 
+    output1=self.conv9(output1) #receptive field 33
+    output1=self.conv10(output1) #receptive field 37
+    output1=self.conv11(output1) #receptive field 45
+    output1=self.conv12(output1) #receptive field 57
+    output1=self.conv13(output1) #receptive field 77
+    output1=self.conv14(output1) #receptive field 113
+    output1=self.conv15(output1) #receptive field 149
+    output1=self.conv16(output1) #receptive field 185
+    output1=self.conv17(output1) #receptive field 189
+    output1=self.upsampling1(output1) #receptive field 193
+    output1=torch.cat((output1,self.concat1),1) #receptive field 197,31
+    output1=self.conv18(output1) #receptive field 201,35
+    output1=self.conv19(output1) #receptive field 205,39
 
 
    # operations on depth image
-    bg_image_depth=self.conv_depth20(x2)
-    bg_image_depth=self.conv_depth21(bg_image_depth)
-    bg_image_depth=self.conv_depth22(bg_image_depth)
-    bg_image_depth=self.conv_depth23(bg_image_depth)
+    bg_image_depth=self.conv_depth20(x2) #receptive field 3
+    bg_image_depth=self.conv_depth21(bg_image_depth) #receptive field 5
+    bg_image_depth=self.conv_depth22(bg_image_depth) #receptive field 7
+    bg_image_depth=self.conv_depth23(bg_image_depth) #receptive field 9
 
-    output2=self.conv_depth1(x1)
-    output2=self.conv_depth2(output2)
-    output2=self.conv_depth3(output2)
-    output2=self.conv_depth4(output2)
-    output2=torch.cat((output2,bg_image_depth),1)
-    output2=self.conv_depth5(output2)
-    output2=self.conv_depth6(output2)
-    output2=self.conv_depth7(output2)
-    output2=self.conv_depth8(output2)
+    output2=self.conv_depth1(x1) #receptive field 3
+    output2=self.conv_depth2(output2) #receptive field 5
+    output2=self.conv_depth3(output2) #receptive field 7
+    output2=self.conv_depth4(output2) #receptive field 9
+    output2=torch.cat((output2,bg_image_depth),1) #receptive field 9
+    output2=self.conv_depth5(output2) #receptive field 13
+    output2=self.conv_depth6(output2) #receptive field 19
+    output2=self.conv_depth7(output2) #receptive field 29
+    output2=self.conv_depth8(output2) #receptive field 31
     self.concat2=output2
-    output2=self.conv_depth9(output2)
-    output2=self.conv_depth10(output2)
-    output2=self.conv_depth11(output2)
-    output2=self.conv_depth12(output2)
-    output2=self.conv_depth13(output2)
-    output2=self.conv_depth14(output2)
-    output2=self.conv_depth15(output2)
-    output2=self.conv_depth16(output2)
-    output2=self.conv_depth17(output2)
-    output2=self.upsampling2(output2)
-    output2=torch.cat((output2,self.concat2),1)
-    output2=self.conv_depth18(output2)
-    output2=self.conv_depth19(output2)
+    output2=self.conv_depth9(output2) #receptive field 33
+    output2=self.conv_depth10(output2) #receptive field 37
+    output2=self.conv_depth11(output2) #receptive field 45
+    output2=self.conv_depth12(output2) #receptive field 57
+    output2=self.conv_depth13(output2) #receptive field 77
+    output2=self.conv_depth14(output2) #receptive field 113 
+    output2=self.conv_depth15(output2) #receptive field 149
+    output2=self.conv_depth16(output2) #receptive field 185
+    output2=self.conv_depth17(output2) #receptive field 189
+    output2=self.upsampling2(output2) #receptive field 193
+    output2=torch.cat((output2,self.concat2),1) #receptive field 197,31
+    output2=self.conv_depth18(output2) #receptive field 201 35
+    output2=self.conv_depth19(output2) #receptive field 205,39
  
     return output1,output2
-
 ```
-# [explaination video of this model in two minutes] 
+# [explaination video of this model in two minutes](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ) 
 
 ## why i am not using 160x160 instead of 100x100 in image size
 * So torch.summary is actually a good program to find the size occupied by model in ram.So when i ran the torch.summary my model is using  23 Gb storage in ram.Here is the output by 160x160 image in torch summary
