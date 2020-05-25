@@ -853,7 +853,7 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
     self.conv19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201 input:100x100x128 output:100x100x1
     
 ```
-## So in conv17,18,19 i didnt use any dilation because we reached the end of our network so it will be bettwr if we try to increase stability rather than receptive filed.So at the ending layers i didnt used any dilation.But i already got a receptive field of 205x205,39x39
+## So in conv17,18,19 i didnt use any dilation because we reached the end of our network so it will be better if we try to increase stability rather than receptive filed.So at the ending layers i didnt used any dilation.But i already got a receptive field of 205x205,39x39
 * So from conv15 the output will be 50x50x128 and we will send it to conv16.The output form conv16 will be 50x50x64.
 * Then we will send it to conv17 where the input is 50x50x64 and output is 50x50x64
 * Then we will send it to upsampling because we need to add skip connection to the variable and they should be of same size.So the skip connection is of size 100x100x64 so we need to convert present varible to size 100x100x64 which is of size 50x50x64.
