@@ -13,7 +13,7 @@
  * Mask predicted in some range
  
  ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)
- * Mask scaled down to 0-1 on algorithm [link]()
+ * Mask scaled down to 0-1 on algorithm [link](https://github.com/GadirajuSanjayvarma/S15/blob/master/README.md#scalingalgorithm)
  
  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg)
  * depth image predicted
@@ -1669,6 +1669,7 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 * Training and testing loss for 5 epochs
 ![loss](https://github.com/GadirajuSanjayvarma/S15/blob/master/train_test_loss.png)
 * Code i used for scaling the mask  images
+### scaling algorithm
 ```
 def return_image(img):
   img=img.cpu().numpy()
