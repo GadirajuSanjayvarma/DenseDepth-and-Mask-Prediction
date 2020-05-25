@@ -6,6 +6,21 @@
   * This is the most memorable course.I learned a lot from this course.Thank you  rohan sir for letting this course at such a affordable        price with hands-on  assignments.
   * Okay.Now this ReadMe tells the process and steps i followed for this Assignment
   * Let us start with my journey of predicting masks and depth images if we given background with foreground image and a background image.
+ 
+ # before going on let us see the results of my model in it's final epoch
+ 
+ * The mask image where left one is actual image and right one is predicted image .
+ * Mask predicted in some range
+ 
+ ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)
+ * Mask scaled down to 0-1 on algorithm [link]()
+ 
+ ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg)
+ * depth image predicted
+ 
+ ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth13.jpg)
+  
+  
 # Data
  * Data is the most important part in the deep neural networks.
  * So a highly qualified iq brain with millions of neurons will be wasted if there is no knowledge in it.
@@ -431,6 +446,7 @@ print(mu, sq/n, std, n)
 
 
 # Main part loading the dataset in the format of batches by creating a class
+* Link to file which contains get_dataset class which loads batches to our network [file](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4batchLoader.py)
  * Okay now we entered the first step of creating the images into batches
 * Here we completed all the required steps to successfully convert images into batches
 * So initially we will create a class say **get_dataset which inherits from Dataset class**.So usually this is a custom data so we are following this procedure.If this is a predefined dataset in pytorch then it will be in batches and it is a simple process.
@@ -496,6 +512,7 @@ class get_dataset(Dataset):
 
 
 ## Applying transformations to datasets
+* Link to file in my library which will aplly transformations [file](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4datatransforms.py)
 * Applying transformations to datasets is one of the most important aspect in the deep learning.
 * if we have to increase the accuracy then we need more capacity or more data to train on.
 * In first case to add more capacity then we need more amount of gpu to do work.
@@ -614,12 +631,12 @@ test_transforms=(fgbg_transforms1,background_transforms1,mask_transforms1,depth_
 
 ### Okay sir we have also completed the transformations of our inputs and outputs which are foreground_background,background,depth,mask.Now let us move to next session before that drink some water sir:)
 
-## Loading the dataset by calling the dataset
+## Loading the dataset by calling the dataset and dataloader class
 
 * So after defining the transformations and get_dataset class we need to define a method to call it.
 * Below is a code that is used to define the dataset in batches
-* link to [eva4dataloaders](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4dataloaders.py)
-* link to [eva4batchLoader](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4batchLoader.py)
+* link to my library python file for dataloader[eva4dataloaders](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4dataloaders.py)
+* link to my library python file for batchloader [eva4batchLoader](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4batchLoader.py)
 ```
 from eva4batchLoader import get_dataset
 from eva4dataloaders import DataLoader
@@ -668,6 +685,7 @@ plt.show()
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
 # Model architecture input-100x100x3,100x100x3 then output-100x100x1,100x100x1,receptive field-205x205,39x39 at ending layer (The Main Engine behind deep learning)
+### link to the model architecture file where model class is named as [depth_mask_model](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4models1.py)
 ### [Explaination video of this model architecture by me](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ)
 ### * So when i understood the assignment i am very much excited in developing the model.
 ### * Now the input to model is foreground_background image and next one is background image.
@@ -1347,7 +1365,9 @@ Estimated Total Size (MB): 3796.16
 ```
 * you can observe the input size is 3 Gb.It is a lot of difference.Now i can have batch size of 40.Before with 160x160 i will have batch size of 8 or 16.
 
-
+# now since we entered the model hyperparamter training here is the link for training of my model [model_training_file](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4modeltrainer.py)
+# Here is the link to my modelstats file which will collect the stats from model training and save them
+[link](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4modelstats.py)
 # LOSS FUNCTIONS FOR THE MODEL
 
 * So i intially explained that i divided this model into two sub models.
@@ -1479,6 +1499,7 @@ we also have a parameter called final_div_factor which is used min_learning_rate
 ```
 
 ## Finding the maximum learnig rate and minimum learning rate
+### link to file in library for [lrRangeTest](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4LrRangeFinder.py)
 
 * Here we will use a method called lr Range Test where we will run the model from several epochs while increasing the learning_rate linearly. 
 * We will plot the graph after that and the learning_rate in which we get highest training accuracy will be the Maximum learning rate.
@@ -1580,16 +1601,16 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 
 # Why OneCycleLr is the best in this prediction and updation of parameters??
 * So intially our image is a combination of 1 and 0 and our dpeth image is a distribution of values.
-## So we cannot update the decimal places ,we have to update integer part in the floating numbers.Without updating them we cannot set the pixels values which will affect our image.
+### So we cannot update the decimal places for good prediction,we have to update integer part in the floating numbers.Without updating them we cannot set the pixels values which will affect our image.
 * I understood it after reading notes.So i thought about onecylcelr and it is really affecting the speed and accuracy.
-* It started updating the decimal places and slowly it started updating the real numbers which will show affect in the output image.
+* It started updating the decimal places and slowly it started updating the integer part in decimal places which will show affect in the output image.
 
 # The Derivative of loss wrt parameters
 * So initially we need to find derivative of loss w.r.t to the weights.So we will discuss the propagation of loss.
 * So initially we need to have two sub-modules one is for predicting mask and other is for predicting for depth image.
 * So i will calculate the loss of mask module with BinaryCrossEntropy and i will calculate the depth with L1Loss.
 * I will sum both of these loss and i will propagate with the loss.
-### * So when we come to backpropagation intially we will backpropagate with loss1 while taking loss2 as constant and taking derivative w.r.t loss2 and while loss1 as constant.
+### So when we come to backpropagation intially we will backpropagate with loss1 while taking loss2 as constant and taking derivative w.r.t loss2 and while loss1 as constant.
 ### * So when we are backpropagating w.r.t to loss1 then it will backpropagate through module1 and it will never touch module2 because they both are independent modules.
 * In this way we are backpropagating module1 and module2 through different loss functions.
 * Here Below is the code which is used for backpropagation.
@@ -1633,6 +1654,8 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 ```
 * It implements the benchmark alogorithm where it is going to select the best optimized convolution algorithm for our model and decreases time by 2.**It will not work always but luckily it worked for me**
 # RESULTS
+* Link of results in drive folder [link](https://drive.google.com/open?id=1untlYjJkzxJgURBvyJy8qtl08FbPRxqV)
+* Link to results in github page [link](https://github.com/GadirajuSanjayvarma/S15/tree/master/results_images)
 * I totally ran this model for 13 epochs with 88000 images of size 100x100x3.
 * But when i am running my colab gets disconnected at 8 epoch but i am saving checkpoint in the drive.
 * My Colab gets disconncted and output gets cleared.So in google colab you can see the output  for next five epochs which i ran so totally we will get 13 epochs.
@@ -1641,6 +1664,10 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 ## In each image left one is Groung truth and right one is Predicted label.
 ## * here i Presented three outputs one is mask in some range,mask in range 0-1 and depth image predicted by model.
 * Results are displayed in epoch wise order
+* Training and testing accuracy for 5 epochs
+![accuracy](https://github.com/GadirajuSanjayvarma/S15/blob/master/train_accuracy.png)
+* Training and testing loss for 5 epochs
+![loss](https://github.com/GadirajuSanjayvarma/S15/blob/master/train_test_loss.png)
 * Code i used for scaling the mask  images
 ```
 def return_image(img):
