@@ -137,7 +137,7 @@ INPUT bg image, list of fg images
   * After Extraction the size will be around 4 GB
  
  ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
- [Here is the link to our colab file for complete data processing steps]()
+ [Here is the link to our colab file for complete data processing steps](https://github.com/GadirajuSanjayvarma/S15/blob/master/Final_Data_Creation.ipynb)
  ### Here are the links for the dataset and also the statistics for the dataset
  ### Links to dataset
 
@@ -1880,4 +1880,4 @@ completion of entire batch time is 6.33277153968811
 
 # have you just thrown some logs/numbers on the screen or have actually presented the visual results as well.
 * I have presented the accuracy with the pictures of masks,scaled masks(0-1) and depth images.I have represented the accuracies and pictures.
-* You can also find this link [here]()
+* You can also find in this [colab file](https://github.com/GadirajuSanjayvarma/S15/blob/master/Assignment15_final.ipynb)
