@@ -120,6 +120,30 @@ INPUT bg image, list of fg images
  
  ### Hello sir.Okay we now also completed the data processing steps which is most crucial for our deep neural network
  [Here is the link to our colab file for complete data processing steps]()
+ ### Here are the links for the dataset and also the statistics for the dataset
+ ### Links to dataset
+
+* foreground images [here](https://drive.google.com/drive/folders/1ZXqTNZEx_oM2oBR-i6I99WeagOlO9DAv?usp=sharing)
+
+* background images [here](https://drive.google.com/drive/folders/1yQG1D513ITs77rXNI0rVPcDCu0jmBvbT?usp=sharing)
+
+* mask images [here](https://drive.google.com/drive/folders/1xiW7NI_85_WU2h6NIDCfEEGqdZT2Ujek?usp=sharing)
+
+* zipfile for generated dataset [here](https://drive.google.com/file/d/1E4tZL5sq66RwGTzfAv3iws-gJDgwOLvM/view?usp=sharing)
+
+
+###  Top-level layout of the dataset (Directory Structure)
+```
+|---custom_data
+    |---bgimages                  # contains 100 background images
+    |---foreground                # contains 100 foreground png imags and images produced by flipping them (200)
+    |---masks                     # contains 200 masks for the above foreground images
+    |---output
+        |---fgbg                  # 400000 images produced by overlaying every fg 20 times on bg                 
+        |---masks                 # 400000 respective masks of the fgbg images
+        |---masks                 # 400000 respective depth images of fgbg images
+```
+
  
  # Data Loading in Colab file
  [Link to my dataset folder which contains background images and zip file](https://drive.google.com/drive/folders/1JII8CODaU93vGfdLMfewmZ2tPsEbLgHP?usp=sharing)
@@ -423,7 +447,8 @@ print(mu, sq/n, std, n)
    * It is very simple and efficient.We can also apply transformations in this class while returning the image which provide so much convenience for us.
    * Below is the code i used to produce images in batches.
  
-```class get_dataset(Dataset):
+```
+class get_dataset(Dataset):
   def __init__(self,dataset,transforms=None):
     self.fg_bgimage,self.bg_image,self.mask_image,self.depth_image=zip(*dataset)
     self.transform=transforms
@@ -587,7 +612,7 @@ test_transforms=(fgbg_transforms1,background_transforms1,mask_transforms1,depth_
 
 ```
 
-### Okay sir we have also completed the transformations of our inputs and outputs which are foredround_backgorund,background,depth,mask.Now let us move to next session before that drink some water sir:)
+### Okay sir we have also completed the transformations of our inputs and outputs which are foreground_background,background,depth,mask.Now let us move to next session before that drink some water sir:)
 
 ## Loading the dataset by calling the dataset
 
@@ -642,7 +667,7 @@ plt.show()
 
 
 ## sir we both completed the entire loading of images which is good.Okay now we will move on to the model architecture.
-# Model architecture input-100x100x3,100x100x3 then output-100x100x3,100x100x3,receptive field-205x205,39x39 at ending layer (The Main Engine behind deep learning)
+# Model architecture input-100x100x3,100x100x3 then output-100x100x1,100x100x1,receptive field-205x205,39x39 at ending layer (The Main Engine behind deep learning)
 ### [Explaination video of this model architecture by me](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ)
 ### * So when i understood the assignment i am very much excited in developing the model.
 ### * Now the input to model is foreground_background image and next one is background image.
@@ -669,7 +694,7 @@ plt.show()
 ### A quick remiander that first two paths belong to mask image module and last two paths belong to depth image module.Both of their implementations are same so initially i will explain the first two paths upto end and last two paths are same as first two paths.So please try to understand and i will also provide a video link for this architecture explaination in youtube by me [link](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ).
  
 * So now we can see in that figure that we have input box.
-* So as i said we need to have **** two seperate covoutions ****  for mask and depth image .
+* So as i said we need to have ****two seperate covoutions****  for mask and depth image .
 * so i send fg_bg image to conv1 and bg image to conv20 which are mask path.
 * The same fg_bg image and bg image are sent through conv_depth1 and conv_depth20 which are on the right size (last two).
 * The input sizes of two images are same which are 100x100x3.
@@ -683,7 +708,7 @@ plt.show()
 ```
 * So we will get an image with 3 channels and we will proceed with channels 16,16 32,32 which is the order followed in embedding device.But to have greater batch size and faster training i used this architecture.
 * We need to compromise sometimes :).
-* So by self.conv4 we will have 32 channel image and we raeched a receptive field of 9.
+* So by self.conv4 we will have 32 channel image and we reached a receptive field of 9.
 
 * So i send the bg image through conv20,conv21,conv22,conv23.
 * The code for those convolutions are not as detailed because i am using modular code but you can  basically understand.
@@ -718,8 +743,7 @@ def forward(self,x1,x2):
     output1=self.conv4(output1) #receptive field 9
     output1=torch.cat((output1,bg_image_mask),1) 9 #we are concatenating and we will get output of                                                     channels
 ```
-* THe basic intuition behind this is the model gets the only necessary features from conv20-conv23
- of background for it's concatenation with conv4 output during backpropagation.
+## The basic intuition behind this is the model gets the only necessary features from conv20-conv23 of background for it's concatenation with conv4 output during backpropagation which is very helpful.
  * The model gets necessary features from conv1-conv4 and we will concatenate them.
  * This is the basic functionality of those convolutions in part-1 picture.
  
@@ -740,13 +764,13 @@ def forward(self,x1,x2):
 ```
 * So here earlier i talked about a important concept **Receptive Field**
 * So to increase receptive fields we need to use dilated convolutions.
-* Dilated convolutions are used to increase the receptive field by maintaining same kernal size by increasing dilation size.
+## Dilated convolutions are used to increase the receptive field by maintaining same kernal size by increasing dilation size.
 ```
 The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=dilation+keral_size
 ```
 * So the receptive filed increased by 13,19,29,31 respectively.
 
-* **After that conv8 we can see a path generating from it.It is skip connection.SO i will add it to another ouput before ending so that we can have multiple receptive fields.**
+**After that conv8 we can see a path generating from it.It is skip connection.SO i will add it to another ouput before ending so that we can have multiple receptive fields.**
 
 * SO by here we completed the part-2 of diagram where we send from conv5,conv6,conv7,conv8.Next we will send to conv9 which we will see in part3.Similar architecture is also followed in right side also which is predicting depth.
 
@@ -782,7 +806,7 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * In conv9 we will get an input of 100x100x64 and the output will be 50x50x16.
 * Here instead of maxpooling we used 3x3 with stride 2 for better performance.It reduces the size by 2.
 * Next we will send it conv10,conv11,conv12,conv13,conv14,conv15 which will manipulate the no of channnels but not with size.
-* **You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10 **
+**You can see that i used dilation value in conv11 but not in conv10 because i just applied the reduction in size so to stabilize the values and adding capacity i didnt used the dilation in conv10**
 * In the conv11,conv12,conv13,conv14 and conv15. I increased the dilation in 2 times to its previous dilation value everytime which leads to jump in receptive field.
 
 * The channels of images followed as 16,32,32,64,64,128 which is of a embedding type of architecture.
@@ -804,20 +828,21 @@ The receptive field formula is Rout=Rin+(k-1)*stride //for dilation kernal size=
 * In part-4 we have conv16,conv17,upsample,concatenation,conv18,conv19.
 * The code used for the part-4 diagram
 ```
- self.conv16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185 input-image:50x50x128 output:50x50x64
+    self.conv16=self.create_conv2d(128,64,dilation=16,padding=16) #receptive field 185 input-image:50x50x128 output:50x50x64
     self.conv17=self.create_conv2d(64,64) #receptive field 189 input-image:50x50x64 output:50x50x64
     self.upsampling2=nn.Upsample((100,100), mode='nearest') #receptive field 193 formula is 2^(no of sampling layers)*(kernalsize-1) 
     self.conv18=self.create_conv2d(128,128) #receptive field 197,31 input-image:100x100x128 output:100x100x128
     self.conv19=self.create_conv2d(128,1,bn=False, dropout=0, relu=False) #receptive field 201 input:100x100x128 output:100x100x1
     
 ```
+## So in conv17,18,19 i didnt use any dilation because we reached the end of our network so it will be bettwr if we try to increase stability rather than receptive filed.So at the ending layers i didnt used any dilation.But i already got a receptive field of 205x205,39x39
 * So from conv15 the output will be 50x50x128 and we will send it to conv16.The output form conv16 will be 50x50x64.
 * Then we will send it to conv17 where the input is 50x50x64 and output is 50x50x64
 * Then we will send it to upsampling because we need to add skip connection to the variable and they should be of same size.So the skip connection is of size 100x100x64 so we need to convert present varible to size 100x100x64 which is of size 50x50x64.
 * So after upsampling we have to concatenate and now we have multiple receptive fields.
 * After concatenation we will have 128 channels  of shape 100x100x128.
 * In conv18 we will convolve on this one and obtain 128 channels of size 100x100 again.
-* In conv19 which is  a final convolution we convert our 128 channels to single channel which will be our depth image.
+* In conv19 which is  a final convolution we convert our 128 channels to single channel which will be our mask image.
 * The code which is used in forward propagation is
 ```
    output1=self.conv16(output1) #receptive field 185
@@ -1013,7 +1038,7 @@ class depth_mask_model(Net):
  
     return output1,output2
 ```
-# [explaination video of this model in two minutes](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ) 
+# [explaination video of this model in Ten minutes](https://www.youtube.com/watch?v=69mVVYxWF94&list=UUuYUdYjyqOhFkGE2SAJWBtQ) 
 
 ## why i am not using 160x160 instead of 100x100 in image size
 * So torch.summary is actually a good program to find the size occupied by model in ram.So when i ran the torch.summary my model is using  23 Gb storage in ram.Here is the output by 160x160 image in torch summary
@@ -1331,21 +1356,22 @@ Estimated Total Size (MB): 3796.16
 * So Loss Functions play an important role in this model
 
 ## LOSS FUNCTIONS FOR MASK SUB-MODEL
+### Sir in some part of documentation i might use word BinaryCrossEntropy for BCEWithLogitLoss since they are used interchangeably. 
 * So we generally said that the Mask is a combination of zeros and ones.
 * So intially we need to give a pixel value either 0 or 1.
 * So when i though about it and i thought my final output must be 0 and 1 only and not any distribution of values.
-* So i used BinaryCrossEntropy.It is generally used for binary classification and it is just perfect for this moment.
+* So i used BCEWthLogitLoss.It is generally used for binary classification and it is just perfect for this moment.
 * Here we need to classify a pixel as one or zero.
 * I also explained in the [data preparation section](https://github.com/GadirajuSanjayvarma/S15#mask-calculation-of-foreground_background-image) at we prepared it in a way such cow pixels get value 1 and other pixels get value 0.
-* So i thought BinaryCrossEntropy will be a good fit for this.**I tried different loss functions like L1Loss and MSELoss but they are useful for finding continuous values like distributions but  not discrete values**
+* So i thought BCEWthLogitLoss will be a good fit for this.**I tried different loss functions like L1Loss and MSELoss but they are useful for finding continuous values like distributions but  not discrete values**
 ![BCELOSS](https://github.com/GadirajuSanjayvarma/S15/blob/master/loss_function1.png)
 
-### The intuition behind BinaryCrossEntropy.
-* The only difference between Binarycrossentropy and crossentropy is that we have sigmoid in Binarycrossentropy.
+### The intuition behind BinaryCrossEntropy(BCEWthLogitLoss).
+* The only difference between Binarycrossentropy(BCEWthLogitLoss) and crossentropy is that we have sigmoid in Binarycrossentropy.
 * So the output which we are getting will be in between 0 and 1.
 * But in crossentropy the values will not be in between 0 and 1.
 * So since our target mask values are also 0 and 1 we can use Binary crossentropy.
-#### Maths behind Binary crossentropy.
+#### Maths behind Binary crossentropy(BCEWthLogitLoss).
 * Let us consider the entire loss function as L.
 * So For our neural network the loss should be minimum.
 * So there are two terms in this loss functions.
@@ -1374,7 +1400,7 @@ So this is the basic intuition why we use this binarycrossentropy for binary cla
 * So i though we can use MSELoss or L1Loss.
 * I thought MSELoss is not good because it will not punish small values effectively.Since we are doing normalisation i thought that most of the values are in between 0 and 1.SO MSELoss is not a good fit for this.
 * I tried with L1Loss and it worked great.It is one of the simplest loss function where we will just simply subtract one predicted pixel with by its actual pixel.It is really simple.
-* I used it but it is not showing any effect until i used **ONECYCLELR** where i will explain why it played most important role.
+### I used it but it is not showing any effect until i used **ONECYCLELR** where i will explain why it played most important role.
 * Since it is  distribution of values we can use it and we can find loss across image and backpropagate it. 
 ![L1LOSS](https://github.com/GadirajuSanjayvarma/S15/blob/master/loss_function2.png)
 
@@ -1401,7 +1427,7 @@ ypred~~yactual
  * Optimizer is very helpful for us when updating the parameters of the model.
  * So the selection of optimizer depends on the no of training samples.
  * If you have more no of training examples then you can choose SGD optimizer otherwise we can choose Adam optimizer.
- * Since we are having 400K training examples we can choose SGD and some people feel like it is a constant optimizer while adam and others are dynamic optimizers but SGD can also be dynamic by using onecyclelr.We can also use momentum which will get us from plateaus.
+ * Since we are having 400K(but since it is open problem i trained with 88k images) training examples we can choose SGD and some people feel like it is a constant optimizer while adam and others are dynamic optimizers but SGD can also be dynamic by using onecyclelr.We can also use momentum which will get us from plateaus.
  * Below is the code for SGD declaration.
  ```
  optimizer = optim.SGD(model.parameters(), lr=1.0,momentum=0.9,nesterov=True)
@@ -1417,7 +1443,7 @@ ypred~~yactual
 * Now we are going to backpropagate through the model by using this averaged loss.
 * Here the paarmeters updation is also taken place by this optimizer.
 
-# Updation of parameters adn explaination of every parameter in it.
+# Updation of parameters and explaination of every hyper-parameter in it.
 **Hello sir upto now we learned how i prepared data,normalizing it,loading into batches,model preparation,loss calculation and optimizer.**
 * Now we have done everything for those right and good parameters and we now we will see how the updation of parameters took place.
 * So intially the updation of paarmeters take place by a simple formula and here it is.
@@ -1460,6 +1486,7 @@ we also have a parameter called final_div_factor which is used min_learning_rate
 * We will divide the initial_lr by final_div_factor which we get min_lr.
 * In this method we will get max_lr and min_lr.
 * So here is the implementation of the lrRangeTest
+* Link to code for [lrRangeTest](https://github.com/GadirajuSanjayvarma/S15/blob/master/EVA4/eva4LrRangeFinder.py)
 ```
 import torch.optim as optim
 from tqdm import tqdm_notebook, tnrange
@@ -1549,6 +1576,14 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 
 ![accuaracy vs learning_rates](https://github.com/GadirajuSanjayvarma/S15/blob/master/lr_range_test.png)
 
+* We can clearly see that Maximum learning rate is 1 where we found the highest accuracy.
+
+# Why OneCycleLr is the best in this prediction and updation of parameters??
+* So intially our image is a combination of 1 and 0 and our dpeth image is a distribution of values.
+## So we cannot update the decimal places ,we have to update integer part in the floating numbers.Without updating them we cannot set the pixels values which will affect our image.
+* I understood it after reading notes.So i thought about onecylcelr and it is really affecting the speed and accuracy.
+* It started updating the decimal places and slowly it started updating the real numbers which will show affect in the output image.
+
 # The Derivative of loss wrt parameters
 * So initially we need to find derivative of loss w.r.t to the weights.So we will discuss the propagation of loss.
 * So initially we need to have two sub-modules one is for predicting mask and other is for predicting for depth image.
@@ -1573,8 +1608,8 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 # Accuracy calculation
 * So accuracy is the generally defined as how good our model is predicting.
 * Here we are not doing a classification problem so we are not comparing indexes.
-* So i decide i decide to compare pixel-wise accuarcy.
-* I will compare only real-values in a floating number.
+* So i decide to compare pixel-wise accuarcy.
+* I will compare only integer part in a floating number.
 * We will not do a equality check on the entire number because a floating numbers cannot be equal.
 * SO we will convert it into int format and we will check them.
 * That means we will convert the entire pixels to integer format and compare onebyone respectively. 
@@ -1602,69 +1637,82 @@ accuracy=(0.750829682747523, 1.4292672363065537, 1.7931644582100923, 2.158233193
 * But when i am running my colab gets disconnected at 8 epoch but i am saving checkpoint in the drive.
 * My Colab gets disconncted and output gets cleared.So in google colab you can see the output  for next five epochs which i ran so totally we will get 13 epochs.
 * But i save the results in drive folder which are good.
-## * So here are my results and left side image is Ground truth image and right side one is Model prediction.
+## * So here are my results and left side image is Ground truth image and right side one is Model prediction.In first epoch we can observe we have three outputs.First one is mask in random range,Second one is Mask i scaled 0-1 and depth image
+## In each image left one is Groung truth and right one is Predicted label.
 ## * here i Presented three outputs one is mask in some range,mask in range 0-1 and depth image predicted by model.
 * Results are displayed in epoch wise order
+* Code i used for scaling the mask  images
+```
+def return_image(img):
+  img=img.cpu().numpy()
+  for i,row in enumerate(img):
+    for j,value in enumerate(row):
+      if(value>0):
+        img[i,j]=255
+      else:
+        img[i,j]=0
+  return img
+```
 #### Epoch-1
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output  mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask1.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale1.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth1.jpg)
 
 #### Epoch-2
 
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            |output  mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask2.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale2.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth2.jpg)
 #### Epoch-3
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask3.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale3.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth3.jpg)
 #### Epoch-4
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask4.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale4.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth4.jpg)
 
 #### Epoch-5
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask5.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale5.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth5.jpg)
 #### Epoch-6
-Masks in some range            |  mask scaled in range 0-1    | depth images
+ output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask6.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale6.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth6.jpg)
 
 #### Epoch-7
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output  mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask7.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale7.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth7.jpg)
 
 #### Epoch-8
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            |output  mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask8.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale8.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth8.jpg)
 
 #### Epoch-9
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask9.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale9.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth9.jpg)
 
 #### Epoch-10
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask10.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale10.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth10.jpg)
 
 #### Epoch-11
-Masks in some range            |  mask scaled in range 0-1    | depth images
+ output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask11.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale11.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth11.jpg)
 
 #### Epoch-12
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            |output  mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask12.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale12.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth12.jpg)
 
 #### Epoch-13
-Masks in some range            |  mask scaled in range 0-1    | depth images
+output Masks in some range            | output mask scaled in range 0-1    | depth images
 :-------------------------:|:-------------------------:|:-------------------------:
 ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)  |  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg) | ![depth](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/depth13.jpg)
 
@@ -1673,30 +1721,27 @@ Masks in some range            |  mask scaled in range 0-1    | depth images
 ## Here are the results.
 
 * Foreground_background image
-
+![fg_bg image](https://github.com/GadirajuSanjayvarma/S15/blob/master/fg_bg_crossvalidatiom.png)
 
 * Background image
+![bg_image](https://github.com/GadirajuSanjayvarma/S15/blob/master/bg_image_crossvalidation.jpg)
 * depth image
-* Mask image
-
-
-
-
-
-
-
-
+![depth_image](https://github.com/GadirajuSanjayvarma/S15/blob/master/depth_crossvalidation.png)
+* Mask output image in some range
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/mask_random_crossvalidation.png)
+* Mask image scaled between 0-1
+![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/mask_scale_crossvalidation.png)
 
 # Okay now I will try to answer the questions you asked us sir.
 ### Have you thought about changing data format, channels, etc??
 * Yes sir,i have thought about it.So when we are developing the transparent images we need alpha channels to create transparency.
 * So after laying foreground on background we are converting into them into 3 channels and background into 3 channels.
-* We are also converting dpeth ,mask image into single channel since they are having only black and white pixels and contains in gray mode.
-* So the masks are in initially  RGBA format and we converted it into RGB format.We also have to generate the mask and depth images in cmap="gray" format.
+* We are also converting depth ,mask image into single channel since they are having only black and white pixels and contains in gray mode.
+* So the FG_bg are in initially  RGBA format and we converted it into RGB format.We also have to generate the mask and depth images in cmap="gray" format.
 
 ### Have you thought and utilized the fact that you can train on smaller images first and then move to large resolution ones??
 
-* I know we can train on different size images but since all my dataset is of constant size.
+* I know we can train on different size images but since all my dataset is of constant size i didn't applied it.
 * Foreground_background,background,depth and mask are of constant size 100x100 when they are training.So i didnt use any multi-scale training process.
 
 ### How creative you have been, for example, what all loss functions have you tried, have you tried to only solve for 1 problem before solving for both, etc???
@@ -1705,17 +1750,21 @@ Masks in some range            |  mask scaled in range 0-1    | depth images
 * So i refered the notes and i remembered all the Main-roots for development of neural network.
 * So initially the depth images and maks images are not same and they have their differences.
 * So i thought of having different sub-modules of similar architecture so that loss propagation would be different and any parameters would not be effected.
-* A clear explaination of my model is provided above with video too.[model_explaination](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-201x201-at-ending-layer-the-main-engine-behind-deep-learning)
-* The loss fucntions i tried are BCEwithLogitLoss,L1Loss,MSELoss.I tried very less functions because i knew the intuition of the neural network working in the discrete(mask) and distributed(depth).So i tried these loss functions and i also explained why i used them in below link  
+* A clear explaination of my model is provided above with video too.[model_explaination](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-205x20539x39-at-ending-layer-the-main-engine-behind-deep-learning)
+* The loss functions i tried are BCEwithLogitLoss,L1Loss,MSELoss.I tried very less functions because i knew the intuition of the neural network working in the discrete(mask) and distributed(depth).So i tried these loss functions and i also explained why i used them in below link  
 * The loss functions i used are BinaryCrossEntropy for mask module and L1Loss for my depth module.So when i calculate loss from both these functions i will backpropagate and partial derivatives will take care to find gradients in way they are created without affecting one another.
 * A clear explaination on loss functions is explaines here[explaination](https://github.com/GadirajuSanjayvarma/S15#loss-functions-for-the-model)
+
+#### TO your second question when we are generating data i tried to work on the Generating batches in our network.
+* So initially i tried to generate images ,loading images to network ,applying transfromations.So after completing the entire loading part i started working on the training and  model architecture etc.
+* Writing our goals on paper or tweaking which we need to do helps a lot during this assignment.I also wrote all my observations of various things and their effects which is really helpful for making decisions.
 
 ### How creative your DNN is, how many params you have (a DNN without Param count mentioned will not get any evaluation points from us as we won't know did it actually help)
 
 * My deep neural network takes input 100x100x3(fg_bg image),input2 100x100x3(bg_image) and gives output mask(100x100x1),depth(100x100x1).
-* My Network has multiple receptive fields which is having 201x201,40x40 receptive field one for mask and one for depth.
+* My Network has multiple receptive fields which is having 205x205,39x39 receptive field one for mask and one for depth.
 * My network has two skip connections and two upsampling layers to produce similar image size.
-* For getting 201x201 receptive field as it is reconstruction problem we cannot afford more maxpooling layers.
+* For getting 205x205,39x39 receptive field as it is reconstruction problem we cannot afford more maxpooling layers.
 * SO i have convolutions which are called dilated convolutions which are increasing receptive fields for same kernal size.
 * The dilation are increasing in this order like 2,4,8,16,16 and they are increasing by 2 times to their previous time.
 * My summary of network architecture looks like this
@@ -1730,13 +1779,13 @@ Params size (MB): 5.11
 Estimated Total Size (MB): 3796.16
 -----------------------------------
 ```
-* I explained the my network more clearly in this part of readme[model](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-201x201-at-ending-layer-the-main-engine-behind-deep-learning)
+* I explained the my network more clearly in this part of readme[model](https://github.com/GadirajuSanjayvarma/S15#model-architecture-input-100x100x3100x100x3-then-output-100x100x3100x100x3receptive-field-205x20539x39-at-ending-layer-the-main-engine-behind-deep-learning)
 
 # How creative you have been while using data augmentation, and why did you pick those augmentations??
 * Data augumentation is used for greater more accuracy.So intially when we consider to increase the accuracy we need to increase the data exponentially.
 * But when we try to increase the data it is very difficult process so we will go with data augmentations which will try to increase the training accuracy.
-* So when we go with background image we will apply transformations  normalisation on foreground_background image,depth and mask image.
-* So during mask there is a combination of 1 and 0 only.So we will not apply any transformations on it during mask so we will not change any values.
+* So when we go with background image we will apply transformations like normalisation(only) on foreground_background image and depth image.
+* So during mask there is a combination of 1 and 0 only.***So we will not apply any transformations on it during mask so we will not change any values***.
 * A great explaination of transformations and data augumetation is explained in this [link](https://github.com/GadirajuSanjayvarma/S15#applying-transformations-to-datasets)
 
 # colab gives you less than 9-10 hours, then how did you manage creatively compute for days
@@ -1778,10 +1827,10 @@ loading data into cuda then time is 0.002600431442260742
 executing statement optimizer zero grad time is 0.00025963783264160156
 loading data into model and getting output time is 2.4460830688476562
 calculating loss and getting output time is 0.03791546821594238
-loss backward into  time is 7.759066104888916
+loss backward into  time is 2.759066104888916
 optimizer step time is 0.17007899284362793
 completion of accuracy calculation time is 0.9137403964996338
-completion of entire batch time is 11.33277153968811
+completion of entire batch time is 6.33277153968811
 ```
 * As we see the loss.backward() fucntion takes more time.
 
