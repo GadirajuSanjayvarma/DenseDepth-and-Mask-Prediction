@@ -13,7 +13,7 @@
  * Mask predicted in some range
  
  ![mask](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask13.jpg)
- * Mask scaled down to 0-1 on algorithm [link](https://github.com/GadirajuSanjayvarma/S15/blob/master/README.md#scalingalgorithm)
+ * Mask scaled down to 0-1 on algorithm [link](https://github.com/GadirajuSanjayvarma/S15/blob/master/README.md#scaling-algorithm)
  
  ![mask0-1](https://github.com/GadirajuSanjayvarma/S15/blob/master/results_images/mask_scale13.jpg)
  * depth image predicted
